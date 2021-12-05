@@ -8,7 +8,7 @@ module.exports = {
   mode: isDevelopment ? 'development' : 'production',
   target: isDevelopment ? 'web' : 'browserslist',
   entry: {
-    script: path.resolve( __dirname, 'src', 'index.tsx' ),
+    awake: path.resolve( __dirname, 'src', 'index.tsx' ),
   },
   module: {
     rules: [
@@ -34,19 +34,21 @@ module.exports = {
   devServer: {
     port: 8000,
     hot: true,
+    historyApiFallback: true
   },
   output: {
-    filename: 'js/[name]_awake_quiz.js',
+    filename: 'js/[name]_woo_react_account.js',
     path: path.resolve(__dirname, 'assets'),
     clean: true,
     assetModuleFilename: "images/[hash][ext][query]",
+    publicPath: '/'
   },
   plugins: [
     isDevelopment && new HtmlWebpackPlugin({
       template: path.join(__dirname, 'src', 'index.html')
     }),
     new MiniCssExtractPlugin({
-      filename: "css/[name]_awake_quiz.css"
+      filename: "css/awake_woo_react_account.css"
     }),
   ].filter(Boolean),
   resolve: {
