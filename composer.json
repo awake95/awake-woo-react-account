@@ -1,0 +1,7 @@
+{
+  "name": "awake/awake-woo-ajax",
+  "description": "Awake plugin template/example",
+  "require": {
+    "yahnis-elsts/plugin-update-checker": "^4.10"
+  }
+}

@@ -1,0 +1,5 @@
+.idea
+.git
+test
+vendor
+/node_modules
