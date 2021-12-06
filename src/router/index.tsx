@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Account from "../pages/Account/Account";
 import Login from "../pages/Login/Login";
-import {Navigate, Outlet} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import Dashboard from "../pages/Account/Dashboard/Dashboard";
 
 export interface IRoute {
@@ -24,7 +24,7 @@ const routes = (isAuth: boolean): IRoute[] => [
     },
     {
         path: RouteNames.ACCOUNT,
-        element: <Account/>,
+        element: isAuth ? <Account/> : <Navigate to={RouteNames.LOGIN}/>,
         children: [
             {
                 path:  RouteNames.DASHBOARD,

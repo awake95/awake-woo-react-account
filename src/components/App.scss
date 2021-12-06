@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  min-height: 100vh;
+}
+
+#awake-woo-react-account {
+  min-height: 100vh;
+  height: 100%;
+}
+
+.app {
+  max-width: 1190px;
+  margin: 0 auto;
+}
+
+.hid {
+  position: absolute;
+  z-index: -1;
+  width: 0;
+  height: 1px;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.checkbox {
+  &-input {
+    position: absolute;
+    z-index: -1;
+    width: 0;
+    height: 1px;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &-label {
+    position: relative;
+    padding-left: 30px;
+
+    &:after,
+    &:before {
+      content: "";
+      display: inline-block;
+      position: absolute;
+      left: 0;
+    }
+
+    &:after {
+      width: 5.5px;
+      height: 11px;
+      top: calc(50% - 3px);
+      left: 1px;
+      opacity: 0;
+      transition: opacity .2s ease-out;
+      transform: rotate(45deg) translateY(-50%);
+      border-right-width: 3px;
+      border-bottom-width: 3px;
+      @apply border-green-500;
+      @apply border-green-500;
+    }
+
+    &:before {
+      width: clamp(15px, 15px, 15px);
+      top: 50%;
+      transform: translateY(-50%);
+      min-width: 15px;
+      margin-right: 10px;
+      height: 15px;
+      @apply border border-gray-200;
+    }
+  }
+
+  &-input:checked + &-label:after {
+    opacity: 1;
+  }
+}
+
+.btn--primary {
+  @apply bg-blue-600 px-5 py-2 rounded text-white transition hover:opacity-70
+}
