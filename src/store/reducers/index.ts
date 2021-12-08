@@ -1,8 +1,10 @@
 import auth from './auth'
-import selectValues from './selectValues'
+import loginReducer from './loginReducer';
+import registerReducer from './registerReducer';
 
 export default {
     auth,
-    selectValues
+    loginReducer,
+    registerReducer
 }
 

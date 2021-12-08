@@ -2,7 +2,7 @@ type values = {
   [ key: string ]: number | string | boolean;
 }
 
-export default function LoginValidation ( values: values ) {
+export default function RegisterValidation ( values: values ) {
   let errors: values = {};
 
   ( Object.keys( values ) as Array<string> ).map( key => {
@@ -11,7 +11,7 @@ export default function LoginValidation ( values: values ) {
       errors[ key ] = 'Email address is invalid';
     }
 
-    if ( key !== 'remember_me' && !values[ key ] ) {
+    if ( key !== 'acceptance_register' && !values[ key ] ) {
       errors[ key ] = 'This field should not be empty';
     }
   } );

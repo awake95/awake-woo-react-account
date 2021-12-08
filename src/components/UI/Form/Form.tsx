@@ -1,30 +1,38 @@
 import * as React from 'react';
-import {FC, useState} from "react";
+import {FC} from "react";
 import useForm from "../../../hooks/useForm";
-import LoginValidation from "../../../helpers/Validation/LoginValidation";
 import {useTypedSelector} from "../../../hooks/useTypedSelector";
 
 type formPropTypes = {
     classnames?: string[];
     id: string;
     setSubmitErrors: (errors: { [key:string]: string }) => void;
-    submitErrors: {[key:string]: string}
+    submitErrors: {[key:string]: string};
+    isValueChanged: boolean;
+    setIsValueChanged: (value:boolean) => void;
+    validation: (values: object, id:string) => object;
+    formValueObjectName: string;
 };
 
-const Form:FC<formPropTypes> = ({children, classnames = [], id, setSubmitErrors, submitErrors}) => {
-    const selectedValues = useTypedSelector(state => state.selectValues).selectedValues;
-    const [ formValid, isFormValid ] = useState<boolean>( false );
-    const [ isValueChanged, setIsValueChanged ] = useState<boolean>(false);
+const Form:FC<formPropTypes> = ({children, classnames = [], id, setSubmitErrors, submitErrors, isValueChanged, setIsValueChanged, validation, formValueObjectName}) => {
+    let selectedValues = useTypedSelector(state => state.loginReducer);
 
-    const { values, handleSubmit } = useForm( onSubmitHandler, LoginValidation, id, selectedValues, setIsValueChanged, setSubmitErrors, submitErrors);
-
-    function onSubmitHandler() {
-        isFormValid( true );
-        console.log(values)
+    if (formValueObjectName === 'registerValues') {
+        selectedValues = useTypedSelector(state => state.registerReducer);
     }
 
+    const onSubmitHandler = () => {
+        if (!isValueChanged) return;
+        console.log(submitErrors);
+        console.log(values)
+
+        setIsValueChanged(false);
+    }
+
+    const { values, handleSubmit } = useForm( onSubmitHandler, validation, id, selectedValues[formValueObjectName], setSubmitErrors, submitErrors);
+
     return (
-        <form id={id} className={classnames.join(' ')} encType='multipart/form-data' onSubmit={handleSubmit}>
+        <form noValidate id={id} className={classnames.join(' ')} encType='multipart/form-data' onSubmit={handleSubmit}>
             {children}
         </form>
     );

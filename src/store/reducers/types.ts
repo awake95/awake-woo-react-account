@@ -4,33 +4,37 @@ export interface AuthState {
 
 export type valuesType = {
     [key: string]: string | boolean;
-    type?: string;
 }
 
-export interface ValuesState {
-    selectedValues: {
-        loginValues:valuesType,
-        registerValues:valuesType;
-    }
+export interface FormValuesState {
+    [key:string]:valuesType
 }
 
 export enum AuthActionsEnum {
     SET_AUTH = "SET_AUTH",
 }
 
-export enum SetSelectedActionsEnum {
-    SET_VALUES = "SET_VALUES",
+export enum FormActionsEnum {
+    SET_LOGIN_VALUES = "SET_LOGIN_VALUES",
+    SET_REGISTER_VALUES = "SET_REGISTER_VALUES",
 }
+
 
 export interface SetAuthAction {
     type: AuthActionsEnum.SET_AUTH;
     payload: boolean;
 }
 
-export interface SetValuesAction {
-    type: SetSelectedActionsEnum.SET_VALUES;
+export interface SetLoginAction {
+    type: FormActionsEnum.SET_LOGIN_VALUES;
     payload: valuesType;
 }
 
-export type SetValueAction = SetValuesAction
+export interface SetRegisterAction {
+    type: FormActionsEnum.SET_REGISTER_VALUES;
+    payload: valuesType;
+}
+
+export type LoginAction = SetLoginAction
+export type RegisterAction = SetRegisterAction
 export type AuthAction = SetAuthAction

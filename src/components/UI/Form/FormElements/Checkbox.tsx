@@ -1,18 +1,29 @@
 import * as React from 'react';
-import {FC, useState} from "react";
+import {FC, useEffect, useState} from "react";
+import {AppDispatch} from "../../../../store";
+import {useDispatch} from "react-redux";
 
 interface textFieldInterface {
     name: string;
     label?: string;
     classnames?: string[];
+    setIsValueChanged: (value:boolean) => void;
+    actionType?: string;
 }
 
-const Checkbox: FC<textFieldInterface> = ({name = 'check', classnames = [], label = 'Check please'}) => {
+const Checkbox: FC<textFieldInterface> = ({name = 'check', classnames = [], label = 'Check please', setIsValueChanged, actionType}) => {
     const [checked, setChecked] = useState<boolean>(false);
+    const dispatch: AppDispatch = useDispatch();
 
     const checkboxHandler = () => {
         setChecked(value => !value);
+        setIsValueChanged(true);
     }
+
+    useEffect(() => {
+        if (!actionType) return;
+        dispatch({type: actionType, payload: {[name]: checked}});
+    }, [checked])
 
     return (
         <div className={classnames.join(' ')}>
