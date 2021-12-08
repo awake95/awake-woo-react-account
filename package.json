@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "cross-env TAILWIND_MODE=watch webpack serve",
-    "build": "cross-env NODE_ENV=production postcss -i tailwind.css -o build.css --minify webpack",
+    "build": "cross-env NODE_ENV=production webpack",
     "build-dev": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -30,6 +30,7 @@
     "react-router": "^6.0.2",
     "react-router-dom": "^6.0.2",
     "redux": "^4.1.2",
+    "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.1",
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",

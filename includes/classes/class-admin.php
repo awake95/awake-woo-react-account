@@ -21,17 +21,17 @@ final class Admin {
 	 * Init hooks
 	 */
 	public static function init() {
-		add_action( 'admin_menu', [ __CLASS__, 'aw_woo_ajax_register_screen' ] );
-		add_action( 'admin_init', [ __CLASS__, 'aw_woo_ajax_options_settings' ] );
-		add_action( 'init', [ __CLASS__, 'aw_woo_ajax_plugin_load_text_domain' ] );
-		add_filter( 'plugin_action_links_awake-woo-ajax/plugin.php', [ __CLASS__, 'aw_woo_ajax_plugin_options_link' ] );
+//		add_action( 'admin_menu', [ __CLASS__, 'aw_woo_ajax_register_screen' ] );
+//		add_action( 'admin_init', [ __CLASS__, 'aw_woo_ajax_options_settings' ] );
+		add_action( 'init', [ __CLASS__, 'awmr_react_account_plugin_load_text_domain' ] );
+//		add_filter( 'plugin_action_links_awake-woo-ajax/plugin.php', [ __CLASS__, 'aw_woo_ajax_plugin_options_link' ] );
 	}
 
 	/**
 	 * Load text domain
 	 */
 
-	public function aw_woo_ajax_plugin_load_text_domain() {
+	public function awmr_react_account_plugin_load_text_domain() {
 		load_plugin_textdomain( SLUG, false, URL . '/languages/' );
 	}
 
