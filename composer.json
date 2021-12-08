@@ -1,5 +1,5 @@
 {
-  "name": "awake/awake-woo-ajax",
+  "name": "awake/awake-woo-react-account",
   "description": "Awake plugin template/example",
   "require": {
     "yahnis-elsts/plugin-update-checker": "^4.10"
