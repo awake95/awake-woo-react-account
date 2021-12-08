@@ -9,7 +9,7 @@ build:
 	cp -r autoload.php $(SLUG)/
 	cp -r plugin.php $(SLUG)/
 	cp -r composer.json $(SLUG)/
-	cp -r dist $(SLUG)/
+	cp -r assets $(SLUG)/
 clean:
 	rm -rf $(SLUG)
 	[ -f dist.zip ] && rm dist.zip
