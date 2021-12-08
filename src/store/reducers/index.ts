@@ -1,10 +1,12 @@
-import auth from './auth'
+import authReducer from './authReducer'
 import loginReducer from './loginReducer';
 import registerReducer from './registerReducer';
+import postDataReducer from './postDataReducer';
 
 export default {
-    auth,
+    authReducer,
     loginReducer,
-    registerReducer
+    registerReducer,
+    postDataReducer
 }
 

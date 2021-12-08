@@ -5,7 +5,7 @@ import {useTypedSelector} from "../hooks/useTypedSelector";
 import './App.scss'
 
 const App = () => {
-    const {isAuth} = useTypedSelector(state => state.auth)
+    const {isAuth} = useTypedSelector(state => state.authReducer)
     const allRoutes = useRoutes(routes(isAuth));
     return (
         <div className='app flex justify-center items-center' style={{minHeight: '100vh'}}>
