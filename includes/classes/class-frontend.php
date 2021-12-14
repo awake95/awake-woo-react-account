@@ -25,6 +25,17 @@ final class Frontend {
 	}
 
 	/**
+     * All translations in frontend
+	 * @return array
+	 */
+
+	static function awmr_translated_strings(): array {
+		return array(
+			'Some' => __( 'Some', SLUG )
+		);
+	}
+
+	/**
 	 * Include scripts/styles on frontend page for category page and shop page, adding localize script
 	 */
 
@@ -39,9 +50,10 @@ final class Frontend {
 
 		$awmr_localize_args = array(
 			'user_logged_in' => ! empty( is_user_logged_in() ) ? is_user_logged_in() : 0,
-			'register_form' => 'yes' === get_option( 'woocommerce_enable_myaccount_registration'),
+			'register_form'  => 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ),
 			'site_url'       => get_site_url(),
 			'ajax_url'       => admin_url( 'admin-ajax.php' ),
+			'i18n'           => json_encode( self::awmr_translated_strings() ),
 			'nonce'          => wp_create_nonce( 'awmr_nonce' ),
 		);
 
