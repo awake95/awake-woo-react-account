@@ -2,6 +2,7 @@ import * as React from 'react';
 import {FC} from "react";
 import useForm from "../../../hooks/useForm";
 import {useTypedSelector} from "../../../hooks/useTypedSelector";
+import { setFormData } from '../../../helpers/AsyncActions/setFormData';
 
 type formPropTypes = {
     classnames?: string[];
@@ -25,6 +26,10 @@ const Form:FC<formPropTypes> = ({children, classnames = [], id, setSubmitErrors,
         if (!isValueChanged) return;
         console.log(submitErrors);
         console.log(values)
+        // if (formValueObjectName === 'login') {
+        //     setFormData(awmr_localize_variables.ajaxUrl, values, 'awmr_login_user_action', awmr_localize_variables.nonce);
+        // }
+
 
         setIsValueChanged(false);
     }

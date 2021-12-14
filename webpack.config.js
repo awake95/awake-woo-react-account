@@ -34,6 +34,7 @@ module.exports = {
   devServer: {
     port: 8000,
     hot: true,
+    open: true,
     historyApiFallback: true
   },
   output: {
@@ -67,4 +68,7 @@ module.exports = {
       extractComments: false,
     })],
   } : {},
+  performance: {
+    hints: false
+  },
 };

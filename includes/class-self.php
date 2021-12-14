@@ -27,6 +27,10 @@ final class _self {
 	 * Load all required classes
 	 */
 	public static function load() {
+		if ( file_exists( PATH . '/includes/functions/helpers.php' ) ) {
+			require_once PATH . '/includes/functions/helpers.php';
+		}
+
 		Admin::init();
 		Frontend::init();
 	}
