@@ -11,13 +11,21 @@ export interface IRoute {
   index?: boolean;
 }
 
-const RouteNames = {
-  login: 'login',
-  account: location.pathname,
-  dashboard: 'dashboard'
+const settings = window.awmr_localize_variables || {
+  woo_account_settings: {
+    generate_password: false,
+    generate_username: false,
+    register_form: false,
+    user_logged_in: false,
+    account_path_name: 'my-account',
+  },
 }
 
-const dashboardPath = RouteNames.account + '/' + RouteNames.dashboard;
+const RouteNames = {
+  login: 'login',
+  account: '/' + settings.woo_account_settings.account_path_name,
+  dashboard: 'dashboard'
+}
 
 const routes = ( isAuth: boolean ): IRoute[] => [
   {
@@ -30,7 +38,7 @@ const routes = ( isAuth: boolean ): IRoute[] => [
       },
       {
         path: RouteNames.login,
-        element: !isAuth ? <Login/> : <Navigate to={ dashboardPath }/>,
+        element: <Login/>,
       }
     ]
   },

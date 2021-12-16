@@ -16,8 +16,8 @@
 namespace Awake\AwakeWooReactAccount;
 
 defined( 'ABSPATH' ) or die();
-if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-	die();
+if ( !is_multisite() && ! is_plugin_active( 'woocommerce/woocommerce.php' ) || !is_multisite() && ! is_plugin_active( 'woocommerce/woocommerce.php' ) && !is_plugin_active_for_network('woocommerce/woocommerce.php') ) {
+	return;
 }
 
 /**

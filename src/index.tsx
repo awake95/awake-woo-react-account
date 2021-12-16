@@ -6,7 +6,17 @@ import { BrowserRouter } from 'react-router-dom';
 import {store} from "./store";
 
 export interface IParams {
-  [key:string]: string | number | boolean
+  site_url: string,
+  ajax_url: string,
+  i18n: { [ key: string ]: string },
+  nonce?: string,
+  woo_account_settings: {
+    generate_password: boolean,
+    generate_username: boolean,
+    register_form: boolean,
+    user_logged_in: boolean,
+    account_path_name: string,
+  },
 }
 
 declare global {

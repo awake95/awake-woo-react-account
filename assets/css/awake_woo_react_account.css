@@ -580,6 +580,14 @@ video {
 }
 
 *, ::before, ::after {
+	--tw-translate-x: 0;
+	--tw-translate-y: 0;
+	--tw-rotate: 0;
+	--tw-skew-x: 0;
+	--tw-skew-y: 0;
+	--tw-scale-x: 1;
+	--tw-scale-y: 1;
+	--tw-transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 	--tw-border-opacity: 1;
 	border-color: rgba(229, 231, 235, var(--tw-border-opacity));
 	--tw-ring-offset-shadow: 0 0 #0000;
@@ -589,6 +597,12 @@ video {
 	position: absolute;
 }.relative {
 	position: relative;
+}.top-1\/2 {
+	top: 50%;
+}.right-2 {
+	right: 0.5rem;
+}.right-0 {
+	right: 0px;
 }.left-0 {
 	left: 0px;
 }.mb-4 {
@@ -597,12 +611,21 @@ video {
 	margin-bottom: 0.5rem;
 }.mb-6 {
 	margin-bottom: 1.5rem;
+}.block {
+	display: block;
 }.flex {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
 }.w-full {
 	width: 100%;
+}.-translate-y-1\/2 {
+	--tw-translate-y: -50%;
+	-webkit-transform: var(--tw-transform);
+	        transform: var(--tw-transform);
+}.transform {
+	-webkit-transform: var(--tw-transform);
+	        transform: var(--tw-transform);
 }.cursor-pointer {
 	cursor: pointer;
 }.flex-wrap {
@@ -645,6 +668,8 @@ video {
 	padding: 1rem;
 }.p-2 {
 	padding: 0.5rem;
+}.pr-7 {
+	padding-right: 1.75rem;
 }.text-xl {
 	font-size: 1.25rem;
 	line-height: 1.75rem;
@@ -667,7 +692,10 @@ video {
 	--tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 	-webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 	        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}body{min-height:100vh}#awake-woo-react-account{min-height:100vh;height:100%}.app{max-width:1190px;margin:0 auto}.hid{position:absolute;z-index:-1;width:0;height:1px;visibility:hidden;opacity:0}.checkbox-input{position:absolute;z-index:-1;width:0;height:1px;visibility:hidden;opacity:0}.checkbox-label{position:relative;padding-left:30px}.checkbox-label:after,.checkbox-label:before{content:"";display:inline-block;position:absolute;left:0}.checkbox-label:after{width:5.5px;height:11px;top:calc(50% - 3px);left:1px;opacity:0;-webkit-transition:opacity .2s ease-out;transition:opacity .2s ease-out;-webkit-transform:rotate(45deg) translateY(-50%);transform:rotate(45deg) translateY(-50%);border-right-width:3px;border-bottom-width:3px;--tw-border-opacity: 1;border-color: rgba(16, 185, 129, var(--tw-border-opacity));--tw-border-opacity: 1;border-color: rgba(16, 185, 129, var(--tw-border-opacity))}.checkbox-label:before{width:15px;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);min-width:15px;margin-right:10px;height:15px;border-width: 1px;--tw-border-opacity: 1;border-color: rgba(229, 231, 235, var(--tw-border-opacity))}.checkbox-input:checked+.checkbox-label:after{opacity:1}.btn--primary {
+}body{min-height:100vh}#awake-woo-react-account{min-height:100vh;height:100%}.app{max-width:1190px;margin:0 auto}.hid{position:absolute;z-index:-1;width:0;height:1px;visibility:hidden;opacity:0}.checkbox-input{position:absolute;z-index:-1;width:0;height:1px;visibility:hidden;opacity:0}.checkbox-label{position:relative;padding-left:30px}.checkbox-label:after,.checkbox-label:before{content:"";display:inline-block;position:absolute;left:0}.checkbox-label:after{width:5.5px;height:11px;top:calc(50% - 3px);left:1px;opacity:0;-webkit-transition:opacity .2s ease-out;transition:opacity .2s ease-out;-webkit-transform:rotate(45deg) translateY(-50%);transform:rotate(45deg) translateY(-50%);border-right-width:3px;border-bottom-width:3px;--tw-border-opacity: 1;border-color: rgba(16, 185, 129, var(--tw-border-opacity));--tw-border-opacity: 1;border-color: rgba(16, 185, 129, var(--tw-border-opacity))}.checkbox-label:before{width:15px;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);min-width:15px;margin-right:10px;height:15px;border-width: 1px;--tw-border-opacity: 1;border-color: rgba(229, 231, 235, var(--tw-border-opacity))}.checkbox-input:checked+.checkbox-label:after{opacity:1}.bi-eye {
+	--tw-text-opacity: 1;
+	color: rgba(220, 38, 38, var(--tw-text-opacity));
+}.btn--primary {
 	border-radius: 0.25rem;
 	border-width: 0px;
 	--tw-bg-opacity: 1;
@@ -688,6 +716,9 @@ video {
 	        transition-duration: 150ms;
 }.btn--primary:hover {
 	opacity: 0.7;
+}.hover\:text-gray-900:hover {
+	--tw-text-opacity: 1;
+	color: rgba(17, 24, 39, var(--tw-text-opacity));
 }@media (min-width: 768px) {
 
 	.md\:mr-4 {

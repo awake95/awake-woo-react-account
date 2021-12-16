@@ -27,7 +27,6 @@ final class Admin {
 		add_action( 'woocommerce_settings_tabs_awmr_account_settings', __CLASS__ . '::awmr_settings_tab' );
 		add_action( 'woocommerce_update_options_awmr_account_settings', __CLASS__ . '::awmr_update_settings' );
 		add_filter( 'plugin_action_links_awake-woo-react-account/plugin.php', [ __CLASS__, 'awmr_plugin_options_link' ] );
-		add_action( 'wp_ajax_nopriv_awmr_login_user_action', [ __CLASS__ . '::awmr_login_user_ajax' ] );
 	}
 
 	/**
@@ -132,18 +131,4 @@ final class Admin {
 		return $links;
 
 	}
-
-	static function awmr_login_user_ajax() {
-
-		check_ajax_referer( 'awmr_nonce', 'awmr_nonce' );
-
-	    if (!isset($_POST['action'])) {
-
-	        echo json_encode(['success']);
-	        wp_die();
-        }
-
-    }
-
-
 }
