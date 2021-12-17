@@ -23,23 +23,17 @@ final class Admin {
 
 	public static function init() {
 		add_action( 'init', [ __CLASS__, 'awmr_react_account_init' ] );
-		add_filter( 'woocommerce_settings_tabs_array', __CLASS__ . '::awmr_add_tab', 9999, 1 );
-		add_action( 'woocommerce_settings_tabs_awmr_account_settings', __CLASS__ . '::awmr_settings_tab' );
-		add_action( 'woocommerce_update_options_awmr_account_settings', __CLASS__ . '::awmr_update_settings' );
-		add_filter( 'plugin_action_links_awake-woo-react-account/plugin.php', [ __CLASS__, 'awmr_plugin_options_link' ] );
+		add_filter( 'woocommerce_settings_tabs_array', [ __CLASS__, 'awmr_add_tab' ], 9999, 1 );
+		add_action( 'woocommerce_settings_tabs_awmr_account_settings', [ __CLASS__, 'awmr_settings_tab' ] );
+		add_action( 'woocommerce_update_options_awmr_account_settings', [ __CLASS__, 'awmr_update_settings' ] );
+		add_filter( 'plugin_action_links_awake-woo-react-account/awake-woo-react-account.php', [ __CLASS__, 'awmr_plugin_options_link' ] );
 	}
 
 	/**
 	 * Load text domain
 	 */
 
-	public function awmr_react_account_init() {
-
-		$woo_acc_path = get_woo_account_main_path();
-		$reg_rule = '^' . $woo_acc_path . '/(.+)?';
-
-		add_rewrite_rule( $reg_rule, "index.php?pagename=' . $woo_acc_path . ", 'top' );
-
+	public static function awmr_react_account_init() {
 		load_plugin_textdomain( SLUG, false, URL . '/languages/' );
 	}
 
@@ -50,7 +44,7 @@ final class Admin {
 	 * @return mixed
 	 */
 
-	static function awmr_add_tab( $tabs ) {
+	public static function awmr_add_tab( $tabs ) {
 		$tabs['awmr_account_settings'] = __( 'AWMR Account', SLUG );
 
 		return $tabs;
@@ -60,7 +54,7 @@ final class Admin {
 	 * Updating custom options
 	 */
 
-	static function awmr_update_settings() {
+	public static function awmr_update_settings() {
 		woocommerce_update_options( self::awmr_get_settings() );
 	}
 
@@ -68,7 +62,7 @@ final class Admin {
 	 * Set fields to woo tab
 	 */
 
-	static function awmr_settings_tab() {
+	public static function awmr_settings_tab() {
 		woocommerce_admin_fields( self::awmr_get_settings() );
 	}
 
@@ -78,27 +72,27 @@ final class Admin {
 
 	static function awmr_get_settings() {
 		$settings = array(
-			'section_title'            => array(
+			'section_title'           => array(
 				'name' => __( 'Awake woocommerce my account settings', SLUG ),
 				'type' => 'title',
 				'desc' => '',
 				'id'   => 'awmr_account_settings_title',
 			),
 			'awmr_sidebar_btn_text'   => array(
-				'name' => __( 'Sidebar funnel link text', 'woocommerce-settings-tab-demo' ),
-				'type' => 'text',
-				'desc' => __( 'Set sidebar funnel link text', SLUG ),
-				'id'   => 'awmr_sidebar_btn_text',
+				'name'    => __( 'Sidebar funnel link text', 'woocommerce-settings-tab-demo' ),
+				'type'    => 'text',
+				'desc'    => __( 'Set sidebar funnel link text', SLUG ),
+				'id'      => 'awmr_sidebar_btn_text',
 				'default' => __( 'Add dog', SLUG )
 			),
 			'awmr_dogs_page_btn_text' => array(
-				'name' => __( 'Funnel link text in dogs page', SLUG ),
-				'type' => 'text',
-				'desc' => __( 'Set funnel link text in dogs page', SLUG ),
-				'id'   => 'awmr_dogs_page_btn_text',
+				'name'    => __( 'Funnel link text in dogs page', SLUG ),
+				'type'    => 'text',
+				'desc'    => __( 'Set funnel link text in dogs page', SLUG ),
+				'id'      => 'awmr_dogs_page_btn_text',
 				'default' => __( 'Add dog', SLUG )
 			),
-			'section_end'              => array(
+			'section_end'             => array(
 				'type' => 'sectionend',
 				'id'   => 'wwmar_settings_end'
 			)
@@ -111,19 +105,21 @@ final class Admin {
 	/**
 	 * @param $links
 	 * Add options link on plugins page
+	 *
 	 * @return mixed
 	 */
 
-	public function awmr_plugin_options_link( $links ) {
-		$url = esc_url( add_query_arg([
+	public static function awmr_plugin_options_link( $links ) {
+		$url = esc_url( add_query_arg( [
 			'page' => 'wc-settings',
-			'tab' => 'awmr_account_settings'],
+			'tab'  => 'awmr_account_settings'
+		],
 			get_admin_url() . 'admin.php'
 		) );
 
 		$settings_link = "<a href='$url'>" . __( 'Settings', SLUG ) . '</a>';
 
-		array_unshift (
+		array_unshift(
 			$links,
 			$settings_link
 		);

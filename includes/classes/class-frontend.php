@@ -26,7 +26,7 @@ final class Frontend {
 		add_action( 'wp_ajax_nopriv_awmr_register_user_action', [ __CLASS__, 'awmr_register_user_ajax' ] );
 	}
 
-	public function awmr_login_user_ajax() {
+	public static function awmr_login_user_ajax() {
 		check_ajax_referer( 'awmr_nonce', 'awmr_nonce' );
 
 		if ( isset( $_POST['action'] ) && isset( $_POST['username'] ) && isset( $_POST['password'] ) ) {
@@ -37,10 +37,12 @@ final class Frontend {
 
 			$user_signon = wp_signon( $info, false );
 
+
+
 			if ( is_wp_error( $user_signon ) ) {
 				echo json_encode( array(
 					'loggedin' => false,
-					'message'  => __( 'Login or password is not correct', SLUG )
+					'message'  => $user_signon->errors
 				) );
 			} else {
 				echo json_encode( array(
@@ -54,14 +56,14 @@ final class Frontend {
 
 	}
 
-	public function awmr_register_user_ajax() {
+	public static function awmr_register_user_ajax() {
 		check_ajax_referer( 'awmr_nonce', 'awmr_nonce' );
-		$username = 'no' === get_option( 'woocommerce_registration_generate_username' ) ? $_POST['create_username'] : '';
-		$password = 'no' === get_option( 'woocommerce_registration_generate_password' ) ? $_POST['create_password'] : '';
-		$email    = $_POST['create_user_email'];
-		$new_customer = wp_create_user(  $username, $password, $email );
+		$username     = 'no' === get_option( 'woocommerce_registration_generate_username' ) ? $_POST['create_username'] : '';
+		$password     = 'no' === get_option( 'woocommerce_registration_generate_password' ) ? $_POST['create_password'] : '';
+		$email        = $_POST['create_user_email'];
+		$new_customer = wp_create_user( $username, $password, $email );
 
-		echo json_encode($new_customer);
+		echo json_encode( $new_customer );
 		die();
 
 		$generate_password = get_option( 'woocommerce_registration_generate_password' );
@@ -94,10 +96,10 @@ final class Frontend {
 
 					$args = array(
 						'can_user_register' => get_option( 'users_can_register', 0 ),
-						'customer' => $new_customer,
-						'created' => true,
-						'message'  => __( 'Account created successfully. redirecting...', SLUG ),
-						'redirect' => apply_filters( "awmr_register_redirect", false )
+						'customer'          => $new_customer,
+						'created'           => true,
+						'message'           => __( 'Account created successfully. redirecting...', SLUG ),
+						'redirect'          => apply_filters( "awmr_register_redirect", false )
 					);
 
 					apply_filters( "awmr_register_user_successful", false );
@@ -140,7 +142,7 @@ final class Frontend {
 
 						$args = array(
 							'code'     => 200,
-							'created' => true,
+							'created'  => true,
 							'message'  => __( 'Account created successfully. redirecting...', SLUG ),
 							'redirect' => apply_filters( "awmr_register_redirect", false )
 						);
@@ -159,8 +161,8 @@ final class Frontend {
 		die();
 	}
 
-	public function awmr_lost_password_ajax() {
-		function process_lost_password(){
+	public static function awmr_lost_password_ajax() {
+		function process_lost_password() {
 			if ( isset( $_POST['wc_reset_password'], $_POST['user_login'] ) ) {
 				$nonce_value = wc_get_var( $_REQUEST['woocommerce-lost-password-nonce'], wc_get_var( $_REQUEST['_wpnonce'], '' ) ); // @codingStandardsIgnoreLine.
 
@@ -170,11 +172,15 @@ final class Frontend {
 				}
 
 				$captcha_enabled = get_option( "captcha_enabled", "1" );
-				if( $captcha_enabled == '1' ){
+				if ( $captcha_enabled == '1' ) {
 
 					session_start();
-					if( strtolower($_POST['lostpassword_captcha']) != strtolower($_SESSION['lostpassword_captcha']['code']) ){
-						echo json_encode(array('lost_password'=>false, 'message'=>__('Your captcha is invalid. Please try again.','woocommerce-ajax-login-register')));die();
+					if ( strtolower( $_POST['lostpassword_captcha'] ) != strtolower( $_SESSION['lostpassword_captcha']['code'] ) ) {
+						echo json_encode( array(
+							'lost_password' => false,
+							'message'       => __( 'Your captcha is invalid. Please try again.', 'woocommerce-ajax-login-register' )
+						) );
+						die();
 					}
 
 				}
@@ -185,10 +191,16 @@ final class Frontend {
 				if ( $success ) {
 					$lost_password = 'Check your inbox for instructions how to set new password.';
 					$lost_password = apply_filters( 'ajaxlogin_lost_password_message', $lost_password );
-					echo json_encode(array('lost_password'=>true, 'message'=>__( $lost_password ,'woocommerce-ajax-login-register')));
+					echo json_encode( array(
+						'lost_password' => true,
+						'message'       => __( $lost_password, 'woocommerce-ajax-login-register' )
+					) );
 					die();
-				} else{
-					echo json_encode(array('lost_password'=>false, 'message'=>__('Invalid username or email.','woocommerce-ajax-login-register')));
+				} else {
+					echo json_encode( array(
+						'lost_password' => false,
+						'message'       => __( 'Invalid username or email.', 'woocommerce-ajax-login-register' )
+					) );
 					die();
 				}
 			}
@@ -210,7 +222,7 @@ final class Frontend {
 	 * Include scripts/styles on frontend page for category page and shop page, adding localize script
 	 */
 
-	static function awmr_enqueue_scripts_and_styles() {
+	public static function awmr_enqueue_scripts_and_styles() {
 
 		if ( ! is_account_page() ) {
 			return;
@@ -227,10 +239,10 @@ final class Frontend {
 				'user_logged_in'    => ! empty( is_user_logged_in() ) ? is_user_logged_in() : 0,
 				'account_path_name' => get_woo_account_main_path(),
 			),
-			'site_url'          => get_site_url(),
-			'ajax_url'          => admin_url( 'admin-ajax.php' ),
-			'i18n'              => json_encode( self::awmr_translated_strings() ),
-			'nonce'             => wp_create_nonce( 'awmr_nonce' ),
+			'site_url'             => get_site_url(),
+			'ajax_url'             => admin_url( 'admin-ajax.php' ),
+			'i18n'                 => json_encode( self::awmr_translated_strings() ),
+			'nonce'                => wp_create_nonce( 'awmr_nonce' ),
 		);
 
 		wp_localize_script( 'awmr_woo_react_account', 'awmr_localize_variables', $awmr_localize_args );
@@ -241,7 +253,7 @@ final class Frontend {
 	 * @return string
 	 */
 
-	public function awmr_woo_react_account_shortcode(): string {
+	static function awmr_woo_react_account_shortcode(): string {
 		return '<div id="awake-woo-react-account"></div>';
 	}
 }

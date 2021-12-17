@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "start": "cross-env TAILWIND_MODE=watch webpack serve",
+    "watch": "cross-env TAILWIND_MODE=watch webpack --watch",
     "build": "cross-env NODE_ENV=production webpack",
     "build-dev": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"

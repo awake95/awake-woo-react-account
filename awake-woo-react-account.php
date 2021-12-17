@@ -16,9 +16,19 @@
 namespace Awake\AwakeWooReactAccount;
 
 defined( 'ABSPATH' ) or die();
-if ( !is_multisite() && ! is_plugin_active( 'woocommerce/woocommerce.php' ) || !is_multisite() && ! is_plugin_active( 'woocommerce/woocommerce.php' ) && !is_plugin_active_for_network('woocommerce/woocommerce.php') ) {
-	return;
+
+require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+if ( ! is_multisite() ) {
+	if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+		return;
+	}
+} else {
+	if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+		return;
+	}
 }
+
 
 /**
  * Local constants
@@ -30,6 +40,20 @@ const INDEX = __FILE__;
 define( __NAMESPACE__ . '\NAME', basename( __DIR__ ) );
 define( __NAMESPACE__ . '\PLUGIN_ID', basename( __DIR__ ) . '/' . basename( INDEX ) );
 define( __NAMESPACE__ . '\URL', dirname( plugins_url() ) . '/' . basename( dirname( __DIR__ ) ) . '/' . NAME );
+
+/**
+ * Register activation hook
+ */
+
+register_activation_hook( __FILE__, __NAMESPACE__ . '\awmr_register_hook_on_activation' );
+
+function awmr_register_hook_on_activation() {
+	$woo_acc_path = get_woo_account_main_path();
+	$reg_rule = '^' . $woo_acc_path . '/(.+)?';
+
+	add_rewrite_rule( $reg_rule, "index.php?pagename=' . $woo_acc_path . ", 'top' );
+	flush_rewrite_rules();
+}
 
 /**
  * Autoloader init
