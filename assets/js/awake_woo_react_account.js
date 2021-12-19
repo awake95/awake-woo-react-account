@@ -35136,7 +35136,6 @@ exports.settings = void 0;
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var router_1 = __webpack_require__(/*! ../router */ "./src/router/index.tsx");
 var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/index.js");
-var useTypedSelector_1 = __webpack_require__(/*! ../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
 __webpack_require__(/*! ./App.scss */ "./src/components/App.scss");
 exports.settings = window.awmr_localize_variables || {
     site_url: 'site_url',
@@ -35152,8 +35151,7 @@ exports.settings = window.awmr_localize_variables || {
     },
 };
 var App = function () {
-    var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
-    var allRoutes = (0, react_router_1.useRoutes)((0, router_1.default)(isAuth));
+    var allRoutes = (0, react_router_1.useRoutes)((0, router_1.default)());
     return (React.createElement("div", { className: "app flex justify-center items-center", style: { minHeight: '100vh' } }, allRoutes));
 };
 exports["default"] = App;
@@ -35218,8 +35216,11 @@ var Form = function (_a) {
     (0, react_1.useEffect)(function () {
         if (Object.keys(postData).length === 0)
             return;
-        if (currentValues === 'loginValues') {
+        if (currentValues === 'loginValues' && postData.loggedin) {
             dispatch({ type: types_1.AuthActionsEnum.SET_AUTH, payload: postData.loggedin });
+        }
+        if (currentValues === 'registerValues' && postData.created) {
+            dispatch({ type: types_1.AuthActionsEnum.SET_AUTH, payload: postData.created });
         }
     }, [postData]);
     return (React.createElement("form", { noValidate: true, id: id, className: classnames.join(' '), encType: "multipart/form-data", onSubmit: handleSubmit }, children));
@@ -35565,24 +35566,6 @@ exports.useTypedSelector = react_redux_1.useSelector;
 
 /***/ }),
 
-/***/ "./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx":
-/*!*****************************************************************!*\
-  !*** ./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var Dashboard = function () {
-    return (React.createElement("div", null, "Dashboard"));
-};
-exports["default"] = Dashboard;
-
-
-/***/ }),
-
 /***/ "./src/pages/AccountLayout/AccountLayout.tsx":
 /*!***************************************************!*\
   !*** ./src/pages/AccountLayout/AccountLayout.tsx ***!
@@ -35612,6 +35595,24 @@ var AccountLayout = function () {
         React.createElement(react_router_dom_1.Outlet, null)));
 };
 exports["default"] = AccountLayout;
+
+
+/***/ }),
+
+/***/ "./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx":
+/*!*****************************************************************!*\
+  !*** ./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var Dashboard = function () {
+    return (React.createElement("div", null, "Dashboard"));
+};
+exports["default"] = Dashboard;
 
 
 /***/ }),
@@ -35708,7 +35709,7 @@ var RouteNames = {
     account: '/' + settings.woo_account_settings.account_path_name,
     dashboard: 'dashboard'
 };
-var routes = function (isAuth) { return [
+var routes = function () { return [
     {
         path: RouteNames.account,
         element: React.createElement(AccountLayout_1.default, null),
@@ -35753,21 +35754,34 @@ exports.store = (0, redux_1.createStore)(rootReducer, (0, redux_devtools_extensi
 /*!*************************************************!*\
   !*** ./src/store/reducers/authReducer/index.ts ***!
   \*************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var types_1 = __webpack_require__(/*! ../types */ "./src/store/reducers/types.ts");
 var App_1 = __webpack_require__(/*! ../../../components/App */ "./src/components/App.tsx");
 var initialState = {
-    isAuth: App_1.settings ? !!+App_1.settings.woo_account_settings.user_logged_in : false
+    isAuth: (_a = !!+App_1.settings.woo_account_settings.user_logged_in) !== null && _a !== void 0 ? _a : false
 };
 function authReducer(state, action) {
     if (state === void 0) { state = initialState; }
     switch (action.type) {
         case types_1.AuthActionsEnum.SET_AUTH:
-            return { isAuth: action.payload };
+            console.log('auth is changed');
+            return __assign(__assign({}, state), { isAuth: action.payload });
         default:
             return state;
     }

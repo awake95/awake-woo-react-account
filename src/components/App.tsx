@@ -20,9 +20,7 @@ export const settings = window.awmr_localize_variables || {
 };
 
 const App: FC = () => {
-
-  const { isAuth } = useTypedSelector( state => state.authReducer );
-  const allRoutes = useRoutes( routes( isAuth ) );
+  const allRoutes = useRoutes( routes() );
 
   return (
     <div className="app flex justify-center items-center" style={ { minHeight: '100vh' } }>

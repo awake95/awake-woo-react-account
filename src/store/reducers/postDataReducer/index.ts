@@ -1,4 +1,4 @@
-import { FormActionsEnum, FormValuesState, PostDataAction, RegisterAction } from '../types';
+import { FormActionsEnum, FormValuesState, PostDataAction } from '../types';
 
 const initialState: FormValuesState = {
   postData: {}

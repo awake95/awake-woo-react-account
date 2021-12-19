@@ -27,7 +27,7 @@ const RouteNames = {
   dashboard: 'dashboard'
 }
 
-const routes = ( isAuth: boolean ): IRoute[] => [
+const routes = (): IRoute[] => [
   {
     path: RouteNames.account,
     element: <AccountLayout/>,

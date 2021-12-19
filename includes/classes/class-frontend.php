@@ -58,13 +58,6 @@ final class Frontend {
 
 	public static function awmr_register_user_ajax() {
 		check_ajax_referer( 'awmr_nonce', 'awmr_nonce' );
-		$username     = 'no' === get_option( 'woocommerce_registration_generate_username' ) ? $_POST['create_username'] : '';
-		$password     = 'no' === get_option( 'woocommerce_registration_generate_password' ) ? $_POST['create_password'] : '';
-		$email        = $_POST['create_user_email'];
-		$new_customer = wp_create_user( $username, $password, $email );
-
-		echo json_encode( $new_customer );
-		die();
 
 		$generate_password = get_option( 'woocommerce_registration_generate_password' );
 		if ( ! empty( $_POST['create_user_email'] ) && ! empty( $_POST['create_password'] ) ) {
@@ -95,7 +88,6 @@ final class Frontend {
 					}
 
 					$args = array(
-						'can_user_register' => get_option( 'users_can_register', 0 ),
 						'customer'          => $new_customer,
 						'created'           => true,
 						'message'           => __( 'Account created successfully. redirecting...', SLUG ),

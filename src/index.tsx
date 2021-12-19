@@ -29,7 +29,6 @@ const initialize = () => {
   const awakeWooReactAccount = document.querySelector('#awake-woo-react-account');
 
   if (awakeWooReactAccount) {
-
     render(
       <Provider store={store}>
         <BrowserRouter>

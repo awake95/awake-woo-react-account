@@ -26,8 +26,12 @@ final class Admin {
 		add_filter( 'woocommerce_settings_tabs_array', [ __CLASS__, 'awmr_add_tab' ], 9999, 1 );
 		add_action( 'woocommerce_settings_tabs_awmr_account_settings', [ __CLASS__, 'awmr_settings_tab' ] );
 		add_action( 'woocommerce_update_options_awmr_account_settings', [ __CLASS__, 'awmr_update_settings' ] );
-		add_filter( 'plugin_action_links_awake-woo-react-account/awake-woo-react-account.php', [ __CLASS__, 'awmr_plugin_options_link' ] );
+		add_filter( 'plugin_action_links_awake-woo-react-account/awake-woo-react-account.php', [
+			__CLASS__,
+			'awmr_plugin_options_link'
+		] );
 	}
+
 
 	/**
 	 * Load text domain

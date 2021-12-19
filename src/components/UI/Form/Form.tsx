@@ -56,8 +56,12 @@ const Form: FC<formPropTypes> = ( {
   useEffect( () => {
     if ( Object.keys( postData ).length === 0 ) return;
 
-    if ( currentValues === 'loginValues' ) {
+    if ( currentValues === 'loginValues' && postData.loggedin) {
       dispatch( { type: AuthActionsEnum.SET_AUTH, payload: postData.loggedin } );
+    }
+
+    if ( currentValues === 'registerValues' && postData.created) {
+      dispatch( { type: AuthActionsEnum.SET_AUTH, payload: postData.created } );
     }
 
   }, [ postData ] );
