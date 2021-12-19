@@ -31,7 +31,6 @@ const Form: FC<formPropTypes> = ( {
 } ) => {
 
   let postData = useTypedSelector( state => state.postDataReducer ).postData;
-  const currentValues = id === 'register-form' ? 'registerValues' : 'loginValues';
   const dispatch = useDispatch();
 
   const {
@@ -42,12 +41,12 @@ const Form: FC<formPropTypes> = ( {
   function onSubmitHandler () {
     if ( !isValueChanged ) return;
 
-    if ( currentValues === 'loginValues' ) {
+    if ( id === 'login-form' ) {
       dispatch( setFormData( settings.ajax_url, values, 'awmr_login_user_action', settings.nonce ) );
       setIsValueChanged(false);
     }
 
-    if ( currentValues === 'registerValues' ) {
+    if ( id === 'register-form' ) {
       dispatch( setFormData( settings.ajax_url, values, 'awmr_register_user_action', settings.nonce ) );
       setIsValueChanged(false);
     }
@@ -56,11 +55,11 @@ const Form: FC<formPropTypes> = ( {
   useEffect( () => {
     if ( Object.keys( postData ).length === 0 ) return;
 
-    if ( currentValues === 'loginValues' && postData.loggedin) {
+    if ( id === 'login-form' && postData.loggedin) {
       dispatch( { type: AuthActionsEnum.SET_AUTH, payload: postData.loggedin } );
     }
 
-    if ( currentValues === 'registerValues' && postData.created) {
+    if ( id === 'register-form' && postData.created) {
       dispatch( { type: AuthActionsEnum.SET_AUTH, payload: postData.created } );
     }
 
