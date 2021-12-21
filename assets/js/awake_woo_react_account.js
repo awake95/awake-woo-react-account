@@ -35137,6 +35137,11 @@ var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var router_1 = __webpack_require__(/*! ../router */ "./src/router/index.tsx");
 var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/index.js");
 __webpack_require__(/*! ./App.scss */ "./src/components/App.scss");
+var Login_1 = __webpack_require__(/*! ../pages/AccountLayout/Login/Login */ "./src/pages/AccountLayout/Login/Login.tsx");
+var PrivateRoute_1 = __webpack_require__(/*! ../router/PrivateRoute */ "./src/router/PrivateRoute.tsx");
+var Dashboard_1 = __webpack_require__(/*! ../pages/AccountLayout/Account/Dashboard/Dashboard */ "./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx");
+var AccountLayout_1 = __webpack_require__(/*! ../pages/AccountLayout/AccountLayout */ "./src/pages/AccountLayout/AccountLayout.tsx");
+var NotPrivateRoute_1 = __webpack_require__(/*! ../router/NotPrivateRoute */ "./src/router/NotPrivateRoute.tsx");
 exports.settings = window.awmr_localize_variables || {
     site_url: 'site_url',
     ajax_url: '/admin-ajax.php',
@@ -35152,7 +35157,14 @@ exports.settings = window.awmr_localize_variables || {
 };
 var App = function () {
     var allRoutes = (0, react_router_1.useRoutes)((0, router_1.default)());
-    return (React.createElement("div", { className: "app flex justify-center items-center", style: { minHeight: '100vh' } }, allRoutes));
+    return (React.createElement("div", { className: "app flex justify-center items-center", style: { minHeight: '100vh' } },
+        "1234",
+        React.createElement(react_router_1.Routes, null,
+            React.createElement(react_router_1.Route, { path: "/my-account", element: React.createElement(NotPrivateRoute_1.NotPrivateRoute, null,
+                    React.createElement(AccountLayout_1.default, null)) },
+                React.createElement(react_router_1.Route, { path: "login", element: React.createElement(Login_1.default, null) }),
+                React.createElement(react_router_1.Route, { path: "dashboard", element: React.createElement(PrivateRoute_1.default, null,
+                        React.createElement(Dashboard_1.default, null)) })))));
 };
 exports["default"] = App;
 
@@ -35190,40 +35202,80 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var useForm_1 = __webpack_require__(/*! ../../../hooks/useForm */ "./src/hooks/useForm.ts");
-var useTypedSelector_1 = __webpack_require__(/*! ../../../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
 var setFormData_1 = __webpack_require__(/*! ../../../helpers/AsyncActions/setFormData */ "./src/helpers/AsyncActions/setFormData.ts");
 var App_1 = __webpack_require__(/*! ../../App */ "./src/components/App.tsx");
 var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 var types_1 = __webpack_require__(/*! ../../../store/reducers/types */ "./src/store/reducers/types.ts");
+var Spinner_1 = __webpack_require__(/*! ../Spinner/Spinner */ "./src/components/UI/Spinner/Spinner.tsx");
 var Form = function (_a) {
-    var children = _a.children, _b = _a.classnames, classnames = _b === void 0 ? [] : _b, id = _a.id, setSubmitErrors = _a.setSubmitErrors, submitErrors = _a.submitErrors, isValueChanged = _a.isValueChanged, setIsValueChanged = _a.setIsValueChanged, validation = _a.validation, selectedValues = _a.selectedValues;
-    var postData = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.postDataReducer; }).postData;
-    var currentValues = id === 'register-form' ? 'registerValues' : 'loginValues';
+    var children = _a.children, _b = _a.classnames, classnames = _b === void 0 ? [] : _b, id = _a.id, setSubmitErrors = _a.setSubmitErrors, submitErrors = _a.submitErrors, isValueChanged = _a.isValueChanged, setIsValueChanged = _a.setIsValueChanged, validation = _a.validation, selectedValues = _a.selectedValues, responseData = _a.responseData;
     var dispatch = (0, react_redux_1.useDispatch)();
-    var _c = (0, useForm_1.default)(onSubmitHandler, validation, id, selectedValues, setSubmitErrors, submitErrors), values = _c.values, handleSubmit = _c.handleSubmit;
+    var handleSubmit = (0, useForm_1.default)(onSubmitHandler, validation, selectedValues, setSubmitErrors, submitErrors).handleSubmit;
     function onSubmitHandler() {
         if (!isValueChanged)
             return;
-        if (currentValues === 'loginValues') {
-            dispatch((0, setFormData_1.setFormData)(App_1.settings.ajax_url, values, 'awmr_login_user_action', App_1.settings.nonce));
+        if (id === 'login-form') {
+            dispatch((0, setFormData_1.setFormData)(App_1.settings.ajax_url, selectedValues, 'awmr_login_user_action', types_1.FormActionsEnum.LOGIN_REQUEST_STARTED, types_1.FormActionsEnum.LOGIN_REQUEST_FAILED, types_1.FormActionsEnum.LOGIN_REQUEST_SUCCEEDED, App_1.settings.nonce));
             setIsValueChanged(false);
         }
-        if (currentValues === 'registerValues') {
-            dispatch((0, setFormData_1.setFormData)(App_1.settings.ajax_url, values, 'awmr_register_user_action', App_1.settings.nonce));
+        if (id === 'register-form') {
+            dispatch((0, setFormData_1.setFormData)(App_1.settings.ajax_url, selectedValues, 'awmr_register_user_action', types_1.FormActionsEnum.REG_REQUEST_STARTED, types_1.FormActionsEnum.REG_REQUEST_FAILED, types_1.FormActionsEnum.REG_REQUEST_SUCCEEDED, App_1.settings.nonce));
+            setIsValueChanged(false);
+        }
+        if (id === 'lost-password-form') {
+            dispatch((0, setFormData_1.setFormData)(App_1.settings.ajax_url, selectedValues, 'awmr_lost_password_action', types_1.FormActionsEnum.LOST_PASS_REQUEST_STARTED, types_1.FormActionsEnum.LOST_PASS_REQUEST_FAILED, types_1.FormActionsEnum.LOST_PASS_REQUEST_SUCCEEDED, App_1.settings.nonce));
             setIsValueChanged(false);
         }
     }
     (0, react_1.useEffect)(function () {
-        if (Object.keys(postData).length === 0)
+        var response = responseData.response;
+        if (Object.keys(response).length === 0)
             return;
-        if (currentValues === 'loginValues' && postData.loggedin) {
-            dispatch({ type: types_1.AuthActionsEnum.SET_AUTH, payload: postData.loggedin });
+        if (id === 'login-form') {
+            if (response.loggedin) {
+                dispatch({ type: types_1.AuthActionsEnum.SET_AUTH, payload: response.loggedin });
+            }
+            else {
+                (Object.keys(response.message).length > 0 && Object.keys(response.message)).map(function (key) {
+                    var errors = {};
+                    var message = response.message;
+                    if (key.includes('username') || key.includes('email')) {
+                        errors['username'] = message[key];
+                    }
+                    else {
+                        errors['password'] = message[key];
+                    }
+                    setSubmitErrors(errors);
+                });
+            }
         }
-        if (currentValues === 'registerValues' && postData.created) {
-            dispatch({ type: types_1.AuthActionsEnum.SET_AUTH, payload: postData.created });
+        if (id === 'register-form') {
+            if (response.created) {
+                dispatch({ type: types_1.AuthActionsEnum.SET_AUTH, payload: response.created });
+            }
+            else {
+                var errors = {};
+                var message = response.message;
+                if (message.toString().includes('email')) {
+                    errors['create_user_email'] = message.toString();
+                }
+                if (message.toString().includes('username')) {
+                    errors['create_username'] = message.toString();
+                }
+                setSubmitErrors(errors);
+            }
         }
-    }, [postData]);
-    return (React.createElement("form", { noValidate: true, id: id, className: classnames.join(' '), encType: "multipart/form-data", onSubmit: handleSubmit }, children));
+        if (id === 'lost-password-form') {
+            if (!response.lost_password) {
+                var errors = {};
+                errors['user_login'] = response.message.toString();
+                setSubmitErrors(errors);
+            }
+        }
+    }, [responseData.response]);
+    return (React.createElement("form", { noValidate: true, id: id, className: classnames.join(' '), encType: "multipart/form-data", onSubmit: handleSubmit },
+        responseData.loading && React.createElement(Spinner_1.default, null),
+        children));
 };
 exports["default"] = Form;
 
@@ -35278,6 +35330,7 @@ var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 var useDebounce_1 = __webpack_require__(/*! ../../../../hooks/useDebounce */ "./src/hooks/useDebounce.ts");
+var CheckPassword_1 = __webpack_require__(/*! ../../../../helpers/CheckPassword */ "./src/helpers/CheckPassword/index.ts");
 var TextField = function (_a) {
     var _b = _a.name, name = _b === void 0 ? 'text' : _b, _c = _a.placeholder, placeholder = _c === void 0 ? '' : _c, _d = _a.type, type = _d === void 0 ? 'text' : _d, _e = _a.classnames, classnames = _e === void 0 ? [] : _e, actionType = _a.actionType, errors = _a.errors, setIsValueChanged = _a.setIsValueChanged, _f = _a.showPassword, showPassword = _f === void 0 ? false : _f, _g = _a.checkStrong, checkStrong = _g === void 0 ? false : _g;
     var _h = (0, react_1.useState)(''), value = _h[0], setValue = _h[1];
@@ -35291,22 +35344,14 @@ var TextField = function (_a) {
     var strengthChecker = function (password) {
         if (!checkStrong)
             return;
-        var strongPassword = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})'), mediumPassword = new RegExp('^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})');
-        if (strongPassword.test(password)) {
-            setStrongPassText('Strong');
-        }
-        else if (mediumPassword.test(password)) {
-            setStrongPassText('Medium');
-        }
-        else {
-            setStrongPassText('Weak');
-        }
+        var strength = (0, CheckPassword_1.check_password_strength)(password);
+        setStrongPassText(strength);
         setTimeout(function () {
             setStrongPassText('');
         }, 3000);
     };
     var inputHandler = function (event) {
-        setValue(event.target.value);
+        setValue(event.target.value.trim());
     };
     var showPasswordHandler = function () {
         setPassType({ type: 'text', shown: true });
@@ -35324,7 +35369,7 @@ var TextField = function (_a) {
         }
         dispatch({ type: actionType, payload: (_a = {}, _a[name] = value, _a) });
     }, [debouncedSearchTerm]);
-    return (React.createElement("div", { className: "relative mb-4" },
+    return (React.createElement("div", { className: "relative mb-3" },
         React.createElement("div", { className: "relative" },
             React.createElement("input", { className: [classnames.join(' '), errors && errors[name] ? 'border-red-600' : '', (showPassword ? 'pr-7' : '')].join(' '), value: value, onChange: inputHandler, name: name, placeholder: placeholder, type: showPassword ? passType.type : type }),
             showPassword ?
@@ -35339,11 +35384,33 @@ var TextField = function (_a) {
                             React.createElement("path", { d: "M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" }))
                 : ''),
         strongPassText &&
-            React.createElement("span", { className: ['absolute text-sm text-red-600 right-0', (strongPassText === 'Medium' ? 'text-yellow-500' : ''), (strongPassText === 'Strong' ? 'text-green-500' : '')].join(' '), style: { top: '100%', fontSize: '0.675rem' } }, strongPassText),
+            React.createElement("span", { className: ['absolute text-sm text-red-600 right-0', (strongPassText === 'good' ? 'text-yellow-500' : ''), (strongPassText === 'strong' ? 'text-green-500' : '')].join(' '), style: { top: 'calc(100% + 4px)', fontSize: '0.675rem' } }, strongPassText),
         errors && errors[name] &&
-            React.createElement("span", { className: "absolute text-red-600 left-0", style: { top: '100%', fontSize: '0.675rem' } }, errors[name])));
+            React.createElement("span", { className: "text-red-600 flex items-center block mt-1", style: { fontSize: '0.675rem' } },
+                React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "16", height: "16", fill: "currentColor", className: "bi bi-exclamation-triangle-fill mr-2", viewBox: "0 0 16 16", style: { width: '30px' } },
+                    React.createElement("path", { d: "M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" })),
+                React.createElement("span", { dangerouslySetInnerHTML: { __html: errors[name] } }))));
 };
 exports["default"] = TextField;
+
+
+/***/ }),
+
+/***/ "./src/components/UI/Spinner/Spinner.tsx":
+/*!***********************************************!*\
+  !*** ./src/components/UI/Spinner/Spinner.tsx ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var Spinner = function () {
+    return (React.createElement("div", { className: 'spinner_inner' },
+        React.createElement("span", { className: 'spinner' })));
+};
+exports["default"] = Spinner;
 
 
 /***/ }),
@@ -35352,7 +35419,7 @@ exports["default"] = TextField;
 /*!*************************************************!*\
   !*** ./src/helpers/AsyncActions/setFormData.ts ***!
   \*************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ (function(__unused_webpack_module, exports) {
 
 "use strict";
 
@@ -35394,14 +35461,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.setFormData = void 0;
-var types_1 = __webpack_require__(/*! ../../store/reducers/types */ "./src/store/reducers/types.ts");
-var setFormData = function (url, data, action, nonce) {
+var setFormData = function (url, data, action, actionTypeStarted, actionTypeFailed, actionTypeSucceed, nonce) {
     return function (dispatch) { return __awaiter(void 0, void 0, void 0, function () {
         var formData, key;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     formData = new FormData();
+                    dispatch({ type: actionTypeStarted, payload: { loading: true } });
                     for (key in data) {
                         formData.append(key, data[key]);
                     }
@@ -35415,11 +35482,15 @@ var setFormData = function (url, data, action, nonce) {
                         })
                             .then(function (res) {
                             if (res.ok) {
+                                dispatch({ type: actionTypeStarted, payload: { loading: false } });
                                 res.text().then(function (value) {
-                                    dispatch({ type: types_1.FormActionsEnum.REQUEST_SUCCEEDED, payload: JSON.parse(value) });
+                                    dispatch({ type: actionTypeSucceed, payload: JSON.parse(value) });
                                 });
                             }
                             else {
+                                res.text().then(function (value) {
+                                    dispatch({ type: actionTypeFailed, payload: JSON.parse(value) });
+                                });
                                 console.log('something wrong with server and res is not ok');
                             }
                         })
@@ -35432,6 +35503,54 @@ var setFormData = function (url, data, action, nonce) {
     }); };
 };
 exports.setFormData = setFormData;
+
+
+/***/ }),
+
+/***/ "./src/helpers/CheckPassword/index.ts":
+/*!********************************************!*\
+  !*** ./src/helpers/CheckPassword/index.ts ***!
+  \********************************************/
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.check_password_strength = void 0;
+var check_password_strength = function (passwordValue, blacklist) {
+    if (blacklist === void 0) { blacklist = ['123', 'abc', 'hello', 'admin']; }
+    var wp = window.wp || null;
+    if (wp) {
+        var blacklist_Words = __spreadArray(__spreadArray([], blacklist, true), wp.passwordStrength.userInputDisallowedList(), true), strength = void 0, password_length = wp.passwordStrength.meter(passwordValue, blacklist_Words);
+        switch (password_length) {
+            case 2:
+                strength = 'weak';
+                break;
+            case 3:
+                strength = 'good';
+                break;
+            case 4:
+                strength = 'strong';
+                break;
+            case 5:
+                strength = 'short';
+                break;
+            default:
+                strength = 'short';
+        }
+        return strength;
+    }
+};
+exports.check_password_strength = check_password_strength;
 
 
 /***/ }),
@@ -35463,20 +35582,55 @@ exports["default"] = LoginValidation;
 
 /***/ }),
 
-/***/ "./src/helpers/Validation/RegisterValidation.ts":
-/*!******************************************************!*\
-  !*** ./src/helpers/Validation/RegisterValidation.ts ***!
-  \******************************************************/
+/***/ "./src/helpers/Validation/LostPasswordValidation.ts":
+/*!**********************************************************!*\
+  !*** ./src/helpers/Validation/LostPasswordValidation.ts ***!
+  \**********************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+function LostPasswordValidation(values) {
+    var errors = {};
+    Object.keys(values).map(function (key) {
+        if (key === 'user_login') {
+            if (values[key].toString().includes('@') && !/\S+@\S+\.\S+/.test(values[key].toString())) {
+                errors[key] = 'Email address is invalid';
+            }
+        }
+        if (!values[key]) {
+            errors[key] = 'This field should not be empty';
+        }
+    });
+    return errors;
+}
+exports["default"] = LostPasswordValidation;
+
+
+/***/ }),
+
+/***/ "./src/helpers/Validation/RegisterValidation.ts":
+/*!******************************************************!*\
+  !*** ./src/helpers/Validation/RegisterValidation.ts ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var CheckPassword_1 = __webpack_require__(/*! ../CheckPassword */ "./src/helpers/CheckPassword/index.ts");
 function RegisterValidation(values) {
     var errors = {};
     Object.keys(values).map(function (key) {
         if (key === 'create_user_email' && !/\S+@\S+\.\S+/.test(values[key].toString())) {
             errors[key] = 'Email address is invalid';
+        }
+        if (key === 'create_password') {
+            var strength = (0, CheckPassword_1.check_password_strength)(values[key].toString());
+            if (strength === 'good' || strength === 'strong')
+                return;
+            errors[key] = strength + ' - please enter stronger password';
         }
         if (key !== 'acceptance_register' && !values[key]) {
             errors[key] = 'This field should not be empty';
@@ -35527,8 +35681,7 @@ exports["default"] = useDebounce;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var useForm = function (callback, validate, id, selectedValues, setSubmitErrors, submitErrors) {
-    var values = selectedValues;
+var useForm = function (callback, validate, selectedValues, setSubmitErrors, submitErrors) {
     var _a = (0, react_1.useState)(false), isSubmitting = _a[0], setIsSubmitting = _a[1];
     (0, react_1.useEffect)(function () {
         if (Object.keys(submitErrors).length === 0 && isSubmitting) {
@@ -35537,12 +35690,11 @@ var useForm = function (callback, validate, id, selectedValues, setSubmitErrors,
     }, [submitErrors]);
     var handleSubmit = function (event) {
         event.preventDefault();
-        setSubmitErrors(validate(values, id));
+        setSubmitErrors(validate(selectedValues));
         setIsSubmitting(true);
     };
     return {
         handleSubmit: handleSubmit,
-        values: values,
     };
 };
 exports["default"] = useForm;
@@ -35576,21 +35728,11 @@ exports.useTypedSelector = react_redux_1.useSelector;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
 var useTypedSelector_1 = __webpack_require__(/*! ../../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
-var App_1 = __webpack_require__(/*! ../../components/App */ "./src/components/App.tsx");
 var AccountLayout = function () {
-    var navigate = (0, react_router_dom_1.useNavigate)();
+    var navigate = (0, react_router_dom_1.useNavigate)(), location = (0, react_router_dom_1.useLocation)();
     var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
-    (0, react_1.useEffect)(function () {
-        if (!isAuth) {
-            navigate('/' + App_1.settings.woo_account_settings.account_path_name + '/login');
-        }
-        else {
-            navigate('/' + App_1.settings.woo_account_settings.account_path_name + '/dashboard');
-        }
-    }, [isAuth]);
     return (React.createElement("div", null,
         React.createElement(react_router_dom_1.Outlet, null)));
 };
@@ -35645,8 +35787,10 @@ var Login = function () {
     var _c = (0, react_1.useState)(false), isValueChanged = _c[0], setIsValueChanged = _c[1];
     var selectedLoginValues = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.loginReducer; }).loginValues;
     var selectedRegisterValues = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.registerReducer; }).registerValues;
+    var loginResponse = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.loginPostDataReducer; });
+    var registerResponse = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.registerPostDataReducer; });
     return (React.createElement("div", { className: ["flex flex-wrap md:flex-nowrap items-stretch", (!isRegFormVisible ? 'justify-start' : 'justify-between')].join(' ') },
-        React.createElement(Form_1.default, { id: "login-form", classnames: ['bg-white', 'w-full', 'md:mr-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'p-4', (!isRegFormVisible ? 'md:w-full' : 'md:w-1/2')], isValueChanged: isValueChanged, setIsValueChanged: setIsValueChanged, selectedValues: selectedLoginValues, setSubmitErrors: setLoginSubmitErrors, submitErrors: loginSubmitErrors, validation: LoginValidation_1.default },
+        React.createElement(Form_1.default, { id: "login-form", classnames: ['bg-white', 'w-full', 'md:mr-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'relative', 'p-4', (!isRegFormVisible ? 'md:w-full' : 'md:w-1/2')], isValueChanged: isValueChanged, setIsValueChanged: setIsValueChanged, selectedValues: selectedLoginValues, setSubmitErrors: setLoginSubmitErrors, submitErrors: loginSubmitErrors, validation: LoginValidation_1.default, responseData: loginResponse },
             React.createElement("h2", { className: "mb-2 text-xl" }, "Login"),
             React.createElement("p", { className: "text-gray-600 mb-4" }, "Please fill the form to login in your account"),
             React.createElement(TextField_1.default, { actionType: types_1.FormActionsEnum.SET_LOGIN_VALUES, errors: loginSubmitErrors, setIsValueChanged: setIsValueChanged, classnames: ['w-full', 'border-2', 'border-gray-300', 'rounded', 'p-2'], name: "username", placeholder: "Enter your login/email", type: "text" }),
@@ -35656,7 +35800,7 @@ var Login = function () {
                 React.createElement(react_router_dom_1.Link, { className: 'block text-gray-600 text-sm hover:text-gray-900', to: '/my-account/lost-password' }, "Lost password?")),
             React.createElement(Button_1.default, { classnames: ['btn', 'btn--primary', 'mb-2'], type: "submit" }, "Login")),
         isRegFormVisible &&
-            React.createElement(Form_1.default, { id: "register-form", classnames: ['bg-white', 'w-full', 'md:w-1/2', 'md:ml-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'p-4'], isValueChanged: isValueChanged, setIsValueChanged: setIsValueChanged, setSubmitErrors: setRegisterSubmitErrors, submitErrors: registerSubmitErrors, selectedValues: selectedRegisterValues, validation: RegisterValidation_1.default },
+            React.createElement(Form_1.default, { id: "register-form", classnames: ['bg-white', 'w-full', 'md:w-1/2', 'md:ml-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'p-4', 'relative'], isValueChanged: isValueChanged, setIsValueChanged: setIsValueChanged, setSubmitErrors: setRegisterSubmitErrors, submitErrors: registerSubmitErrors, selectedValues: selectedRegisterValues, validation: RegisterValidation_1.default, responseData: registerResponse },
                 React.createElement("h2", { className: "mb-2 text-xl" }, "Sign up"),
                 React.createElement("p", { className: "text-gray-600 mb-4" }, "Don't have any accounts? Fill the form and we will register you"),
                 App_1.settings.woo_account_settings.generate_password && !App_1.settings.woo_account_settings.generate_username &&
@@ -35675,9 +35819,100 @@ var Login = function () {
                         React.createElement(TextField_1.default, { actionType: types_1.FormActionsEnum.SET_REGISTER_VALUES, setIsValueChanged: setIsValueChanged, errors: registerSubmitErrors, classnames: ['w-full', 'border-2', 'border-gray-300', 'rounded', 'p-2'], name: "create_user_email", placeholder: "Your email", type: "email" }),
                         React.createElement(TextField_1.default, { actionType: types_1.FormActionsEnum.SET_REGISTER_VALUES, setIsValueChanged: setIsValueChanged, errors: registerSubmitErrors, classnames: ['w-full', 'border-2', 'border-gray-300', 'rounded', 'p-2'], name: "create_password", placeholder: "Your password", type: "password", showPassword: true, checkStrong: true })),
                 React.createElement(Checkbox_1.default, { actionType: types_1.FormActionsEnum.SET_REGISTER_VALUES, setIsValueChanged: setIsValueChanged, classnames: ['mb-6'], name: "acceptance_register", label: "Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy." }),
-                React.createElement(Button_1.default, { classnames: ['btn', 'btn--primary'], type: "submit" }, "Register"))));
+                React.createElement(Button_1.default, { classnames: ['btn', 'btn--primary'], type: "submit" }, "Sign up"))));
 };
 exports["default"] = Login;
+
+
+/***/ }),
+
+/***/ "./src/pages/AccountLayout/LostPassword/LostPassword.tsx":
+/*!***************************************************************!*\
+  !*** ./src/pages/AccountLayout/LostPassword/LostPassword.tsx ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var Form_1 = __webpack_require__(/*! ../../../components/UI/Form/Form */ "./src/components/UI/Form/Form.tsx");
+var react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var useTypedSelector_1 = __webpack_require__(/*! ../../../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
+var LostPasswordValidation_1 = __webpack_require__(/*! ../../../helpers/Validation/LostPasswordValidation */ "./src/helpers/Validation/LostPasswordValidation.ts");
+var TextField_1 = __webpack_require__(/*! ../../../components/UI/Form/FormElements/TextField */ "./src/components/UI/Form/FormElements/TextField.tsx");
+var Button_1 = __webpack_require__(/*! ../../../components/UI/Button/Button */ "./src/components/UI/Button/Button.tsx");
+var types_1 = __webpack_require__(/*! ../../../store/reducers/types */ "./src/store/reducers/types.ts");
+var LostPassword = function () {
+    var _a = (0, react_1.useState)({}), lostPasswordSubmitErrors = _a[0], setLostPasswordSubmitErrors = _a[1];
+    var selectedLostPassValues = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.lostPassReducer; }).lostPassValues;
+    var _b = (0, react_1.useState)(false), isValueChanged = _b[0], setIsValueChanged = _b[1];
+    var lostPassResponse = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.lostPassPostDataReducer; });
+    return (React.createElement(Form_1.default, { classnames: ['bg-white', 'w-1/2', 'md:mr-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'relative', 'p-4'], id: 'lost-password-form', validation: LostPasswordValidation_1.default, submitErrors: lostPasswordSubmitErrors, setSubmitErrors: setLostPasswordSubmitErrors, selectedValues: selectedLostPassValues, isValueChanged: isValueChanged, setIsValueChanged: setIsValueChanged, responseData: lostPassResponse },
+        React.createElement("h1", { className: 'mb-2 text-xl' }, "Lost your password? Please enter your username or email address. You will receive a link to create a new password via email."),
+        React.createElement(TextField_1.default, { actionType: types_1.FormActionsEnum.SET_LOST_PASS_VALUES, errors: lostPasswordSubmitErrors, name: 'user_login', placeholder: 'Enter your username/email', type: 'text', setIsValueChanged: setIsValueChanged }),
+        React.createElement(Button_1.default, { classnames: ['btn', 'btn--primary', 'mb-2'], type: "submit" }, "Reset password")));
+};
+exports["default"] = LostPassword;
+
+
+/***/ }),
+
+/***/ "./src/router/NotPrivateRoute.tsx":
+/*!****************************************!*\
+  !*** ./src/router/NotPrivateRoute.tsx ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NotPrivateRoute = void 0;
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
+var useTypedSelector_1 = __webpack_require__(/*! ../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
+var Dashboard_1 = __webpack_require__(/*! ../pages/AccountLayout/Account/Dashboard/Dashboard */ "./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx");
+var Login_1 = __webpack_require__(/*! ../pages/AccountLayout/Login/Login */ "./src/pages/AccountLayout/Login/Login.tsx");
+var NotPrivateRoute = function (_a) {
+    var children = _a.children;
+    var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
+    var navigate = (0, react_router_dom_1.useNavigate)();
+    if (isAuth) {
+        navigate('/my-account/dashboard', { replace: true });
+        return React.createElement(Dashboard_1.default, null);
+    }
+    else {
+        navigate('/my-account/login', { replace: true });
+        return React.createElement(Login_1.default, null);
+    }
+};
+exports.NotPrivateRoute = NotPrivateRoute;
+
+
+/***/ }),
+
+/***/ "./src/router/PrivateRoute.tsx":
+/*!*************************************!*\
+  !*** ./src/router/PrivateRoute.tsx ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
+var useTypedSelector_1 = __webpack_require__(/*! ../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
+var PrivateRoute = function (_a) {
+    var children = _a.children;
+    var location = (0, react_router_dom_1.useLocation)();
+    var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
+    if (!isAuth) {
+        return React.createElement(react_router_dom_1.Navigate, { to: "/my-account/login", state: { from: location } });
+    }
+    return children;
+};
+exports["default"] = PrivateRoute;
 
 
 /***/ }),
@@ -35691,10 +35926,13 @@ exports["default"] = Login;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RouteNames = void 0;
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var Login_1 = __webpack_require__(/*! ../pages/AccountLayout/Login/Login */ "./src/pages/AccountLayout/Login/Login.tsx");
 var Dashboard_1 = __webpack_require__(/*! ../pages/AccountLayout/Account/Dashboard/Dashboard */ "./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx");
 var AccountLayout_1 = __webpack_require__(/*! ../pages/AccountLayout/AccountLayout */ "./src/pages/AccountLayout/AccountLayout.tsx");
+var LostPassword_1 = __webpack_require__(/*! ../pages/AccountLayout/LostPassword/LostPassword */ "./src/pages/AccountLayout/LostPassword/LostPassword.tsx");
+var PrivateRoute_1 = __webpack_require__(/*! ./PrivateRoute */ "./src/router/PrivateRoute.tsx");
 var settings = window.awmr_localize_variables || {
     woo_account_settings: {
         generate_password: false,
@@ -35704,23 +35942,29 @@ var settings = window.awmr_localize_variables || {
         account_path_name: 'my-account',
     },
 };
-var RouteNames = {
+exports.RouteNames = {
     login: 'login',
-    account: '/' + settings.woo_account_settings.account_path_name,
-    dashboard: 'dashboard'
+    account: '/',
+    dashboard: 'dashboard',
+    lostPassword: 'lost-password'
 };
 var routes = function () { return [
     {
-        path: RouteNames.account,
+        path: exports.RouteNames.account,
         element: React.createElement(AccountLayout_1.default, null),
         children: [
             {
-                path: RouteNames.dashboard,
-                element: React.createElement(Dashboard_1.default, null)
+                path: exports.RouteNames.dashboard,
+                element: React.createElement(PrivateRoute_1.default, null,
+                    React.createElement(Dashboard_1.default, null))
             },
             {
-                path: RouteNames.login,
+                path: exports.RouteNames.login,
                 element: React.createElement(Login_1.default, null),
+            },
+            {
+                path: exports.RouteNames.lostPassword,
+                element: React.createElement(LostPassword_1.default, null),
             }
         ]
     },
@@ -35791,33 +36035,10 @@ exports["default"] = authReducer;
 
 /***/ }),
 
-/***/ "./src/store/reducers/index.ts":
-/*!*************************************!*\
-  !*** ./src/store/reducers/index.ts ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-var authReducer_1 = __webpack_require__(/*! ./authReducer */ "./src/store/reducers/authReducer/index.ts");
-var loginReducer_1 = __webpack_require__(/*! ./loginReducer */ "./src/store/reducers/loginReducer/index.ts");
-var registerReducer_1 = __webpack_require__(/*! ./registerReducer */ "./src/store/reducers/registerReducer/index.ts");
-var postDataReducer_1 = __webpack_require__(/*! ./postDataReducer */ "./src/store/reducers/postDataReducer/index.ts");
-exports["default"] = {
-    authReducer: authReducer_1.default,
-    loginReducer: loginReducer_1.default,
-    registerReducer: registerReducer_1.default,
-    postDataReducer: postDataReducer_1.default
-};
-
-
-/***/ }),
-
-/***/ "./src/store/reducers/loginReducer/index.ts":
-/*!**************************************************!*\
-  !*** ./src/store/reducers/loginReducer/index.ts ***!
-  \**************************************************/
+/***/ "./src/store/reducers/formReducers/loginPostDataReducer/index.ts":
+/*!***********************************************************************!*\
+  !*** ./src/store/reducers/formReducers/loginPostDataReducer/index.ts ***!
+  \***********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -35834,7 +36055,50 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-var types_1 = __webpack_require__(/*! ../types */ "./src/store/reducers/types.ts");
+var types_1 = __webpack_require__(/*! ../../types */ "./src/store/reducers/types.ts");
+var initialState = {
+    response: {},
+    loading: false,
+};
+function loginPostDataReducer(state, action) {
+    if (state === void 0) { state = initialState; }
+    switch (action.type) {
+        case types_1.FormActionsEnum.LOGIN_REQUEST_STARTED:
+            return __assign(__assign({}, state), { loading: true });
+        case types_1.FormActionsEnum.LOGIN_REQUEST_FAILED:
+            return __assign(__assign({}, state), { loading: false, response: action.payload });
+        case types_1.FormActionsEnum.LOGIN_REQUEST_SUCCEEDED:
+            return __assign(__assign({}, state), { loading: false, response: action.payload });
+        default:
+            return state;
+    }
+}
+exports["default"] = loginPostDataReducer;
+
+
+/***/ }),
+
+/***/ "./src/store/reducers/formReducers/loginReducer/index.ts":
+/*!***************************************************************!*\
+  !*** ./src/store/reducers/formReducers/loginReducer/index.ts ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var types_1 = __webpack_require__(/*! ../../types */ "./src/store/reducers/types.ts");
 var initialState = {
     loginValues: {
         username: '',
@@ -35846,7 +36110,6 @@ function setLoginValuesReducer(state, action) {
     if (state === void 0) { state = initialState; }
     switch (action.type) {
         case types_1.FormActionsEnum.SET_LOGIN_VALUES:
-            console.log(action.payload);
             var newState = Object.assign(state.loginValues, __assign(__assign({}, state.loginValues), action.payload));
             return __assign(__assign({}, state), { loginValues: newState });
         default:
@@ -35858,10 +36121,10 @@ exports["default"] = setLoginValuesReducer;
 
 /***/ }),
 
-/***/ "./src/store/reducers/postDataReducer/index.ts":
-/*!*****************************************************!*\
-  !*** ./src/store/reducers/postDataReducer/index.ts ***!
-  \*****************************************************/
+/***/ "./src/store/reducers/formReducers/lostPassPostDataReducer/index.ts":
+/*!**************************************************************************!*\
+  !*** ./src/store/reducers/formReducers/lostPassPostDataReducer/index.ts ***!
+  \**************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -35878,28 +36141,33 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-var types_1 = __webpack_require__(/*! ../types */ "./src/store/reducers/types.ts");
+var types_1 = __webpack_require__(/*! ../../types */ "./src/store/reducers/types.ts");
 var initialState = {
-    postData: {}
+    response: {},
+    loading: false,
 };
-function postDataReducer(state, action) {
+function lostPassPostDataReducer(state, action) {
     if (state === void 0) { state = initialState; }
     switch (action.type) {
-        case types_1.FormActionsEnum.REQUEST_SUCCEEDED:
-            return __assign(__assign({}, state), { postData: action.payload });
+        case types_1.FormActionsEnum.LOST_PASS_REQUEST_STARTED:
+            return __assign(__assign({}, state), { loading: true });
+        case types_1.FormActionsEnum.LOST_PASS_REQUEST_SUCCEEDED:
+            return __assign(__assign({}, state), { loading: false, response: action.payload });
+        case types_1.FormActionsEnum.LOST_PASS_REQUEST_FAILED:
+            return __assign(__assign({}, state), { loading: false, response: action.payload });
         default:
             return state;
     }
 }
-exports["default"] = postDataReducer;
+exports["default"] = lostPassPostDataReducer;
 
 
 /***/ }),
 
-/***/ "./src/store/reducers/registerReducer/index.ts":
-/*!*****************************************************!*\
-  !*** ./src/store/reducers/registerReducer/index.ts ***!
-  \*****************************************************/
+/***/ "./src/store/reducers/formReducers/lostPassReducer/index.ts":
+/*!******************************************************************!*\
+  !*** ./src/store/reducers/formReducers/lostPassReducer/index.ts ***!
+  \******************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -35916,7 +36184,91 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-var types_1 = __webpack_require__(/*! ../types */ "./src/store/reducers/types.ts");
+var types_1 = __webpack_require__(/*! ../../types */ "./src/store/reducers/types.ts");
+var initialState = {
+    lostPassValues: {
+        user_login: '',
+    }
+};
+function lostPassReducer(state, action) {
+    if (state === void 0) { state = initialState; }
+    switch (action.type) {
+        case types_1.FormActionsEnum.SET_LOST_PASS_VALUES:
+            console.log(action.payload);
+            return __assign(__assign({}, state), { lostPassValues: action.payload });
+        default:
+            return state;
+    }
+}
+exports["default"] = lostPassReducer;
+
+
+/***/ }),
+
+/***/ "./src/store/reducers/formReducers/registerPostDataReducer/index.ts":
+/*!**************************************************************************!*\
+  !*** ./src/store/reducers/formReducers/registerPostDataReducer/index.ts ***!
+  \**************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var types_1 = __webpack_require__(/*! ../../types */ "./src/store/reducers/types.ts");
+var initialState = {
+    response: {},
+    loading: false,
+};
+function registerPostDataReducer(state, action) {
+    if (state === void 0) { state = initialState; }
+    switch (action.type) {
+        case types_1.FormActionsEnum.REG_REQUEST_STARTED:
+            return __assign(__assign({}, state), { loading: true });
+        case types_1.FormActionsEnum.REG_REQUEST_FAILED:
+            return __assign(__assign({}, state), { loading: false, response: action.payload });
+        case types_1.FormActionsEnum.REG_REQUEST_SUCCEEDED:
+            return __assign(__assign({}, state), { loading: false, response: action.payload });
+        default:
+            return state;
+    }
+}
+exports["default"] = registerPostDataReducer;
+
+
+/***/ }),
+
+/***/ "./src/store/reducers/formReducers/registerReducer/index.ts":
+/*!******************************************************************!*\
+  !*** ./src/store/reducers/formReducers/registerReducer/index.ts ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var types_1 = __webpack_require__(/*! ../../types */ "./src/store/reducers/types.ts");
 var initialState = {
     registerValues: {
         create_username: '',
@@ -35940,6 +36292,35 @@ exports["default"] = setRegisterValuesReducer;
 
 /***/ }),
 
+/***/ "./src/store/reducers/index.ts":
+/*!*************************************!*\
+  !*** ./src/store/reducers/index.ts ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var authReducer_1 = __webpack_require__(/*! ./authReducer */ "./src/store/reducers/authReducer/index.ts");
+var loginReducer_1 = __webpack_require__(/*! ./formReducers/loginReducer */ "./src/store/reducers/formReducers/loginReducer/index.ts");
+var registerReducer_1 = __webpack_require__(/*! ./formReducers/registerReducer */ "./src/store/reducers/formReducers/registerReducer/index.ts");
+var loginPostDataReducer_1 = __webpack_require__(/*! ./formReducers/loginPostDataReducer */ "./src/store/reducers/formReducers/loginPostDataReducer/index.ts");
+var registerPostDataReducer_1 = __webpack_require__(/*! ./formReducers/registerPostDataReducer */ "./src/store/reducers/formReducers/registerPostDataReducer/index.ts");
+var lostPassReducer_1 = __webpack_require__(/*! ./formReducers/lostPassReducer */ "./src/store/reducers/formReducers/lostPassReducer/index.ts");
+var lostPassPostDataReducer_1 = __webpack_require__(/*! ./formReducers/lostPassPostDataReducer */ "./src/store/reducers/formReducers/lostPassPostDataReducer/index.ts");
+exports["default"] = {
+    authReducer: authReducer_1.default,
+    loginReducer: loginReducer_1.default,
+    loginPostDataReducer: loginPostDataReducer_1.default,
+    registerPostDataReducer: registerPostDataReducer_1.default,
+    registerReducer: registerReducer_1.default,
+    lostPassReducer: lostPassReducer_1.default,
+    lostPassPostDataReducer: lostPassPostDataReducer_1.default
+};
+
+
+/***/ }),
+
 /***/ "./src/store/reducers/types.ts":
 /*!*************************************!*\
   !*** ./src/store/reducers/types.ts ***!
@@ -35958,9 +36339,16 @@ var FormActionsEnum;
 (function (FormActionsEnum) {
     FormActionsEnum["SET_LOGIN_VALUES"] = "SET_LOGIN_VALUES";
     FormActionsEnum["SET_REGISTER_VALUES"] = "SET_REGISTER_VALUES";
-    FormActionsEnum["REQUEST_STARTED"] = "REQUEST_STARTED";
-    FormActionsEnum["REQUEST_SUCCEEDED"] = "REQUEST_SUCCEEDED";
-    FormActionsEnum["REQUEST_FAILED"] = "REQUEST_FAILED";
+    FormActionsEnum["SET_LOST_PASS_VALUES"] = "SET_LOST_PASS_VALUES";
+    FormActionsEnum["LOGIN_REQUEST_STARTED"] = "LOGIN_REQUEST_STARTED";
+    FormActionsEnum["LOGIN_REQUEST_SUCCEEDED"] = "LOGIN_REQUEST_SUCCEEDED";
+    FormActionsEnum["LOGIN_REQUEST_FAILED"] = "LOGIN_REQUEST_FAILED";
+    FormActionsEnum["REG_REQUEST_STARTED"] = "REG_REQUEST_STARTED";
+    FormActionsEnum["REG_REQUEST_FAILED"] = "REG_REQUEST_FAILED";
+    FormActionsEnum["REG_REQUEST_SUCCEEDED"] = "REG_REQUEST_SUCCEEDED";
+    FormActionsEnum["LOST_PASS_REQUEST_STARTED"] = "LOST_PASS_REQUEST_STARTED";
+    FormActionsEnum["LOST_PASS_REQUEST_FAILED"] = "LOST_PASS_REQUEST_FAILED";
+    FormActionsEnum["LOST_PASS_REQUEST_SUCCEEDED"] = "LOST_PASS_REQUEST_SUCCEEDED";
 })(FormActionsEnum = exports.FormActionsEnum || (exports.FormActionsEnum = {}));
 
 

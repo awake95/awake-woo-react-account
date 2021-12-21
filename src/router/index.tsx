@@ -1,8 +1,9 @@
 import * as React from 'react';
 import Login from '../pages/AccountLayout/Login/Login';
-import { Navigate } from 'react-router-dom';
 import Dashboard from '../pages/AccountLayout/Account/Dashboard/Dashboard';
 import AccountLayout from '../pages/AccountLayout/AccountLayout';
+import LostPassword from '../pages/AccountLayout/LostPassword/LostPassword';
+import PrivateRoute from './PrivateRoute';
 
 export interface IRoute {
   path: string;
@@ -21,10 +22,11 @@ const settings = window.awmr_localize_variables || {
   },
 }
 
-const RouteNames = {
+export const RouteNames = {
   login: 'login',
-  account: '/' + settings.woo_account_settings.account_path_name,
-  dashboard: 'dashboard'
+  account: '/',
+  dashboard: 'dashboard',
+  lostPassword: 'lost-password'
 }
 
 const routes = (): IRoute[] => [
@@ -34,11 +36,15 @@ const routes = (): IRoute[] => [
     children: [
       {
         path: RouteNames.dashboard,
-        element: <Dashboard/>
+        element: <PrivateRoute><Dashboard/></PrivateRoute>
       },
       {
         path: RouteNames.login,
         element: <Login/>,
+      },
+      {
+        path: RouteNames.lostPassword,
+        element: <LostPassword/>,
       }
     ]
   },

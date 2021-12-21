@@ -1,11 +1,11 @@
-import { FormActionsEnum } from '../../store/reducers/types';
 import { AppDispatch } from '../../store';
 
 type dataType = { [ key: string ]: any }
 
-export const setFormData = ( url: string, data: dataType, action: string, nonce?: string ) => {
+export const setFormData = ( url: string, data: dataType, action: string, actionTypeStarted:string, actionTypeFailed:string, actionTypeSucceed:string, nonce?: string) => {
   return async ( dispatch: AppDispatch ) => {
     const formData = new FormData();
+    dispatch( { type: actionTypeStarted, payload: {loading: true} } );
 
     for ( let key in data ) {
       formData.append( key, data[ key ] );
@@ -23,10 +23,14 @@ export const setFormData = ( url: string, data: dataType, action: string, nonce?
     } )
       .then( res => {
         if ( res.ok ) {
+          dispatch( { type: actionTypeStarted, payload: {loading: false} } );
           res.text().then( value => {
-            dispatch( { type: FormActionsEnum.REQUEST_SUCCEEDED, payload: JSON.parse( value ) } );
+            dispatch( { type: actionTypeSucceed, payload: JSON.parse( value ) } );
           } );
         } else {
+          res.text().then(value => {
+            dispatch( { type: actionTypeFailed, payload: JSON.parse( value ) } );
+          })
           console.log( 'something wrong with server and res is not ok' );
         }
       } )

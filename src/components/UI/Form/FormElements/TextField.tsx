@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../store';
 import useDebounce from '../../../../hooks/useDebounce';
 import { LoginAction, FormActionsEnum, valuesType } from '../../../../store/reducers/types';
+import { check_password_strength } from '../../../../helpers/CheckPassword';
 
 interface textFieldInterface {
   name: string;
@@ -41,16 +42,8 @@ const TextField: FC<textFieldInterface> = ( {
 
   const strengthChecker = ( password: string ) => {
     if ( !checkStrong ) return;
-    let strongPassword = new RegExp( '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})' ),
-      mediumPassword = new RegExp( '^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})' );
-
-    if ( strongPassword.test( password ) ) {
-      setStrongPassText( 'Strong' );
-    } else if ( mediumPassword.test( password ) ) {
-      setStrongPassText( 'Medium' );
-    } else {
-      setStrongPassText( 'Weak' );
-    }
+    const strength = check_password_strength(password)
+    setStrongPassText(strength);
 
     setTimeout( function () {
       setStrongPassText( '' );
@@ -58,7 +51,7 @@ const TextField: FC<textFieldInterface> = ( {
   };
 
   const inputHandler = ( event: ChangeEvent<HTMLInputElement> ) => {
-    setValue( event.target.value );
+    setValue( event.target.value.trim() );
   };
 
   const showPasswordHandler = () => {
@@ -79,7 +72,7 @@ const TextField: FC<textFieldInterface> = ( {
   }, [ debouncedSearchTerm ] );
 
   return (
-    <div className="relative mb-4">
+    <div className="relative mb-3">
       <div className="relative">
         <input
           className={ [ classnames.join( ' ' ), errors && errors[ name ] ? 'border-red-600' : '', ( showPassword ? 'pr-7' : '' ) ].join( ' ' ) }
@@ -112,14 +105,19 @@ const TextField: FC<textFieldInterface> = ( {
 
       { strongPassText &&
       <span
-        className={ [ 'absolute text-sm text-red-600 right-0', ( strongPassText === 'Medium' ? 'text-yellow-500' : '' ), ( strongPassText === 'Strong' ? 'text-green-500' : '' ) ].join( ' ' ) }
-        style={ { top: '100%', fontSize: '0.675rem' } }>{ strongPassText }</span>
+        className={ [ 'absolute text-sm text-red-600 right-0', ( strongPassText === 'good' ? 'text-yellow-500' : '' ), ( strongPassText === 'strong' ? 'text-green-500' : '' ) ].join( ' ' ) }
+        style={ { top: 'calc(100% + 4px)', fontSize: '0.675rem' } }>{ strongPassText }</span>
       }
 
       { errors && errors[ name ] &&
-      <span className="absolute text-red-600 left-0" style={ { top: '100%', fontSize: '0.675rem' } }>
-                    { errors[ name ] }
-                </span>
+      <span className="text-red-600 flex items-center block mt-1" style={ { fontSize: '0.675rem' } }>
+             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        className="bi bi-exclamation-triangle-fill mr-2" viewBox="0 0 16 16" style={{width: '30px'}}>
+            <path
+              d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+          </svg>
+        <span dangerouslySetInnerHTML={ { __html: errors[ name ] } }/>
+        </span>
       }
     </div>
   );

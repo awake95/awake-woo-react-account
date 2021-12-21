@@ -22,13 +22,15 @@ const Login: FC = () => {
   const [ isValueChanged, setIsValueChanged ] = useState<boolean>( false );
   const selectedLoginValues = useTypedSelector( state => state.loginReducer ).loginValues;
   const selectedRegisterValues = useTypedSelector( state => state.registerReducer ).registerValues;
+  const loginResponse = useTypedSelector( state => state.loginPostDataReducer );
+  const registerResponse = useTypedSelector( state => state.registerPostDataReducer );
 
   return (
     <div className={["flex flex-wrap md:flex-nowrap items-stretch", ( !isRegFormVisible ? 'justify-start' : 'justify-between' )].join(' ')}>
       <Form id="login-form"
-            classnames={ [ 'bg-white', 'w-full', 'md:mr-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'p-4', ( !isRegFormVisible ? 'md:w-full' : 'md:w-1/2' ) ] }
+            classnames={ [ 'bg-white', 'w-full', 'md:mr-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'relative', 'p-4', ( !isRegFormVisible ? 'md:w-full' : 'md:w-1/2' ) ] }
             isValueChanged={ isValueChanged } setIsValueChanged={ setIsValueChanged } selectedValues={selectedLoginValues}
-            setSubmitErrors={ setLoginSubmitErrors } submitErrors={ loginSubmitErrors } validation={ LoginValidation }>
+            setSubmitErrors={ setLoginSubmitErrors } submitErrors={ loginSubmitErrors } validation={ LoginValidation } responseData={loginResponse}>
         <h2 className="mb-2 text-xl">Login</h2>
         <p className="text-gray-600 mb-4">Please fill the form to login in your account</p>
         <TextField actionType={ FormActionsEnum.SET_LOGIN_VALUES } errors={ loginSubmitErrors }
@@ -52,10 +54,10 @@ const Login: FC = () => {
       {
         isRegFormVisible &&
         <Form id="register-form"
-              classnames={ [ 'bg-white', 'w-full', 'md:w-1/2', 'md:ml-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'p-4' ] }
+              classnames={ [ 'bg-white', 'w-full', 'md:w-1/2', 'md:ml-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'p-4', 'relative' ] }
               isValueChanged={ isValueChanged } setIsValueChanged={ setIsValueChanged }
               setSubmitErrors={ setRegisterSubmitErrors } submitErrors={ registerSubmitErrors } selectedValues={selectedRegisterValues}
-              validation={ RegisterValidation }>
+              validation={ RegisterValidation } responseData={registerResponse}>
           <h2 className="mb-2 text-xl">Sign up</h2>
           <p className="text-gray-600 mb-4">Don't have any accounts? Fill the form and we will register you</p>
           {
@@ -116,7 +118,7 @@ const Login: FC = () => {
           <Checkbox actionType={ FormActionsEnum.SET_REGISTER_VALUES } setIsValueChanged={ setIsValueChanged }
                     classnames={ [ 'mb-6' ] } name="acceptance_register"
                     label="Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy."/>
-          <Button classnames={ [ 'btn', 'btn--primary' ] } type="submit">Register</Button>
+          <Button classnames={ [ 'btn', 'btn--primary' ] } type="submit">Sign up</Button>
         </Form>
       }
     </div>

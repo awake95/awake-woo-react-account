@@ -24,6 +24,7 @@ final class Frontend {
 		add_shortcode( 'awmr_react_account', [ __CLASS__, 'awmr_woo_react_account_shortcode' ] );
 		add_action( 'wp_ajax_nopriv_awmr_login_user_action', [ __CLASS__, 'awmr_login_user_ajax' ] );
 		add_action( 'wp_ajax_nopriv_awmr_register_user_action', [ __CLASS__, 'awmr_register_user_ajax' ] );
+		add_action( 'wp_ajax_nopriv_awmr_lost_password_action', [ __CLASS__, 'awmr_lost_password_ajax' ] );
 	}
 
 	public static function awmr_login_user_ajax() {
@@ -36,7 +37,6 @@ final class Frontend {
 			$info['remember']      = $_POST['remember_me'];
 
 			$user_signon = wp_signon( $info, false );
-
 
 
 			if ( is_wp_error( $user_signon ) ) {
@@ -88,10 +88,10 @@ final class Frontend {
 					}
 
 					$args = array(
-						'customer'          => $new_customer,
-						'created'           => true,
-						'message'           => __( 'Account created successfully. redirecting...', SLUG ),
-						'redirect'          => apply_filters( "awmr_register_redirect", false )
+						'customer' => $new_customer,
+						'created'  => true,
+						'message'  => __( 'Account created successfully. redirecting...', SLUG ),
+						'redirect' => apply_filters( "awmr_register_redirect", false )
 					);
 
 					apply_filters( "awmr_register_user_successful", false );
@@ -113,7 +113,6 @@ final class Frontend {
 				$validation_error = apply_filters( 'awmr_woocommerce_process_registration_errors', $validation_error, $username, $email );
 
 				if ( $validation_error->get_error_code() ) {
-					//throw new Exception( $validation_error->get_error_message() );
 					$errors = array(
 						'code'    => $validation_error->get_error_code(),
 						'created' => false,
@@ -154,47 +153,28 @@ final class Frontend {
 	}
 
 	public static function awmr_lost_password_ajax() {
-		function process_lost_password() {
-			if ( isset( $_POST['wc_reset_password'], $_POST['user_login'] ) ) {
-				$nonce_value = wc_get_var( $_REQUEST['woocommerce-lost-password-nonce'], wc_get_var( $_REQUEST['_wpnonce'], '' ) ); // @codingStandardsIgnoreLine.
+		check_ajax_referer( 'awmr_nonce', 'awmr_nonce' );
 
+		if ( isset( $_POST['user_login'] ) ) {
+//			$nonce_value = wc_get_var( $_REQUEST['woocommerce-lost-password-nonce'], wc_get_var( $_REQUEST['_wpnonce'], '' ) ); // @codingStandardsIgnoreLine.
 
-				if ( ! wp_verify_nonce( $nonce_value, 'lost_password' ) ) {
-					return;
-				}
+			$success = \WC_Shortcode_My_Account::retrieve_password();
 
-				$captcha_enabled = get_option( "captcha_enabled", "1" );
-				if ( $captcha_enabled == '1' ) {
-
-					session_start();
-					if ( strtolower( $_POST['lostpassword_captcha'] ) != strtolower( $_SESSION['lostpassword_captcha']['code'] ) ) {
-						echo json_encode( array(
-							'lost_password' => false,
-							'message'       => __( 'Your captcha is invalid. Please try again.', 'woocommerce-ajax-login-register' )
-						) );
-						die();
-					}
-
-				}
-
-				$success = \WC_Shortcode_My_Account::retrieve_password();
-
-				// If successful, redirect to my account with query arg set.
-				if ( $success ) {
-					$lost_password = 'Check your inbox for instructions how to set new password.';
-					$lost_password = apply_filters( 'ajaxlogin_lost_password_message', $lost_password );
-					echo json_encode( array(
-						'lost_password' => true,
-						'message'       => __( $lost_password, 'woocommerce-ajax-login-register' )
-					) );
-					die();
-				} else {
-					echo json_encode( array(
-						'lost_password' => false,
-						'message'       => __( 'Invalid username or email.', 'woocommerce-ajax-login-register' )
-					) );
-					die();
-				}
+			// If successful, redirect to my account with query arg set.
+			if ( $success ) {
+				$lost_password = 'Check your inbox for instructions how to set new password.';
+				$lost_password = apply_filters( 'awmr_lost_password_message', $lost_password );
+				echo json_encode( array(
+					'lost_password' => true,
+					'message'       => __( $lost_password, SLUG )
+				) );
+				die();
+			} else {
+				echo json_encode( array(
+					'lost_password' => false,
+					'message'       => __( 'Invalid username or email. Please add valid username/email', SLUG )
+				) );
+				die();
 			}
 		}
 	}

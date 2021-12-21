@@ -83,3 +83,33 @@ body {
 .btn--primary {
   @apply bg-blue-600 px-5 py-2 border-0 rounded text-white transition hover:opacity-70
 }
+
+.spinner{
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: rgba(37, 99, 235, 1);
+  animation: 1s spin ease-in-out infinite;
+
+  &_inner {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.8);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes spin{
+  to{
+    transform: rotate(360deg);
+  }
+}

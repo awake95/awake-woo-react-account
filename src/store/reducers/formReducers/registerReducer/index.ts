@@ -1,6 +1,6 @@
-import { FormActionsEnum, FormValuesState, RegisterAction } from '../types';
+import { FormActionsEnum, FormValuesState, RegisterAction } from '../../types';
 
-const initialState: FormValuesState = {
+const initialState: FormValuesState<{}> = {
   registerValues: {
     create_username: '',
     create_user_email: '',
@@ -9,7 +9,7 @@ const initialState: FormValuesState = {
   }
 };
 
-export default function setRegisterValuesReducer ( state = initialState, action: RegisterAction ): FormValuesState {
+export default function setRegisterValuesReducer ( state = initialState, action: RegisterAction ): FormValuesState<{}> {
   switch ( action.type ) {
     case FormActionsEnum.SET_REGISTER_VALUES:
       let newState = Object.assign( state.registerValues, {
