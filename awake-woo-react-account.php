@@ -19,41 +19,16 @@ defined( 'ABSPATH' ) or die();
 
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-if ( ! is_multisite() ) {
-	if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-		return;
-	}
-} else {
-	if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-		return;
-	}
-}
-
-
 /**
  * Local constants
  */
 
 define( __NAMESPACE__ . '\PATH', dirname( __FILE__ ) );
 define( __NAMESPACE__ . '\SLUG', explode( '/', json_decode( file_get_contents( PATH . '/composer.json' ), true )['name'] )[1] );
-const INDEX = __FILE__;
+const INDEX      = __FILE__;
 define( __NAMESPACE__ . '\NAME', basename( __DIR__ ) );
 define( __NAMESPACE__ . '\PLUGIN_ID', basename( __DIR__ ) . '/' . basename( INDEX ) );
 define( __NAMESPACE__ . '\URL', dirname( plugins_url() ) . '/' . basename( dirname( __DIR__ ) ) . '/' . NAME );
-
-/**
- * Register activation hook
- */
-
-register_activation_hook( __FILE__, __NAMESPACE__ . '\awmr_register_hook_on_activation' );
-
-function awmr_register_hook_on_activation() {
-	$woo_acc_path = get_woo_account_main_path();
-	$reg_rule = '^' . $woo_acc_path . '/(.+)?';
-
-	add_rewrite_rule( $reg_rule, "index.php?pagename=' . $woo_acc_path . ", 'top' );
-	flush_rewrite_rules();
-}
 
 /**
  * Autoloader init
@@ -71,8 +46,44 @@ $myUpdateChecker = \Puc_v4_Factory::buildUpdateChecker(
 );
 define( __NAMESPACE__ . '\VERSION', $myUpdateChecker->getInstalledVersion() );
 
+add_action( 'init', __NAMESPACE__ . '\awmr_init_checker' );
+register_activation_hook( __FILE__, __NAMESPACE__ . '\awmr_register_hook_on_activation' );
 /**
- * Load the plugin
+ * Register activation hook
  */
 
-_self::load();
+function awmr_register_hook_on_activation() {
+	if ( defined( 'WC_VERSION' ) ) {
+		$woo_acc_url = get_permalink( wc_get_page_id( 'myaccount' ) );
+		$segments = explode('/', $woo_acc_url);
+		$woo_acc_path = end($segments);
+		$reg_rule     = '^' . $woo_acc_path . '/(.+)?';
+
+		add_rewrite_rule( $reg_rule, "index.php?pagename=' . $woo_acc_path . ", 'top' );
+		flush_rewrite_rules();
+	}
+}
+
+function awmr_init_checker() {
+	if ( ! defined( 'WC_VERSION' ) ) {
+		add_action( 'admin_notices', __NAMESPACE__ . '\awmr_print_error_notice' );
+	} else {
+
+		/**
+		 * Load the plugin
+		 */
+
+		_self::load();
+
+	}
+}
+
+function awmr_print_error_notice() {
+	?>
+    <div class="error notice">
+        <p>
+			<?= __( 'WooCommerce must be active for "Awake woo react account" plugin to work', SLUG ); ?>
+        </p>
+    </div>
+	<?php
+}

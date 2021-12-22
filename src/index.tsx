@@ -19,9 +19,17 @@ export interface IParams {
   },
 }
 
+type WPObject = {
+  passwordStrength: {
+    meter: (pass:string, blacklist: string[]) => number,
+    userInputDisallowedList: () => string[]
+  }
+}
+
 declare global {
   export interface Window {
     awmr_localize_variables: IParams;
+    wp: WPObject
   }
 }
 
@@ -29,7 +37,6 @@ const initialize = () => {
   const awakeWooReactAccount = document.querySelector('#awake-woo-react-account');
 
   if (awakeWooReactAccount) {
-
     render(
       <Provider store={store}>
         <BrowserRouter>

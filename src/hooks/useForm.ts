@@ -1,9 +1,7 @@
 import * as React from "react";
 import {useState, useEffect} from 'react';
 
-const useForm = (callback: () => void, validate: (values: object, id:string) => object, id:string, selectedValues: object, setSubmitErrors:(errors:object) => void, submitErrors: {[key:string]: string}) => {
-
-    const values = selectedValues;
+const useForm = (callback: () => void, validate: (values: object) => object, selectedValues: object, setSubmitErrors:(errors:object) => void, submitErrors: {[key:string]: string}) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -14,13 +12,12 @@ const useForm = (callback: () => void, validate: (values: object, id:string) => 
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setSubmitErrors(validate(values, id));
+        setSubmitErrors(validate(selectedValues));
         setIsSubmitting(true);
     };
 
     return {
         handleSubmit,
-        values,
     }
 };
 

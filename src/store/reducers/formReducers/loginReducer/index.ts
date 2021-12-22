@@ -1,6 +1,6 @@
-import { FormActionsEnum, FormValuesState, LoginAction } from '../types';
+import { FormActionsEnum, FormValuesState, LoginAction } from '../../types';
 
-const initialState: FormValuesState = {
+const initialState: FormValuesState<{}> = {
   loginValues: {
     username: '',
     password: '',
@@ -8,10 +8,9 @@ const initialState: FormValuesState = {
   }
 };
 
-export default function setLoginValuesReducer ( state = initialState, action: LoginAction ): FormValuesState {
+export default function setLoginValuesReducer ( state = initialState, action: LoginAction ): FormValuesState<{}> {
   switch ( action.type ) {
     case FormActionsEnum.SET_LOGIN_VALUES:
-      console.log( action.payload );
       let newState = Object.assign( state.loginValues, {
         ...state.loginValues,
         ...action.payload,
