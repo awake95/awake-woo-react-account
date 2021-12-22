@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "cross-env TAILWIND_MODE=watch webpack serve",
-    "watch": "cross-env TAILWIND_MODE=watch webpack --watch",
+    "watch": "cross-env NODE_ENV=development TAILWIND_MODE=watch webpack --watch",
     "build": "cross-env NODE_ENV=production webpack",
     "build-dev": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -48,6 +48,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
+  "homepage": "/wp-content/plugins/awake-woo-react-account/assets",
   "browserslist": [
     "last 2 versions",
     "> 0.5%",

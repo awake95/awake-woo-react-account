@@ -3,7 +3,6 @@ import { ChangeEvent, FC, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../store';
 import useDebounce from '../../../../hooks/useDebounce';
-import { LoginAction, FormActionsEnum, valuesType } from '../../../../store/reducers/types';
 import { check_password_strength } from '../../../../helpers/CheckPassword';
 
 interface textFieldInterface {
@@ -36,6 +35,7 @@ const TextField: FC<textFieldInterface> = ( {
     type: 'password',
     shown: false
   } );
+  let timeout:ReturnType<typeof setTimeout>;
   const [ strongPassText, setStrongPassText ] = useState<string>( '' );
   const dispatch: AppDispatch = useDispatch();
   const debouncedSearchTerm = useDebounce( value, 200 );
@@ -45,7 +45,7 @@ const TextField: FC<textFieldInterface> = ( {
     const strength = check_password_strength(password)
     setStrongPassText(strength);
 
-    setTimeout( function () {
+    timeout = setTimeout( function () {
       setStrongPassText( '' );
     }, 3000 );
   };
@@ -63,12 +63,18 @@ const TextField: FC<textFieldInterface> = ( {
   };
 
   useEffect( () => {
-    setIsValueChanged( true );
     if ( !actionType ) return;
+    setIsValueChanged( true );
+
     if ( type === 'password' && debouncedSearchTerm ) {
       strengthChecker( value );
     }
+
     dispatch( { type: actionType, payload: { [ name ]: value } } );
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [ debouncedSearchTerm ] );
 
   return (

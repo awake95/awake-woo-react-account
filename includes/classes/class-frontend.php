@@ -21,7 +21,7 @@ final class Frontend {
 	 */
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', [ __CLASS__, 'awmr_enqueue_scripts_and_styles' ] );
-		add_shortcode( 'awmr_react_account', [ __CLASS__, 'awmr_woo_react_account_shortcode' ] );
+		add_filter( 'the_content', [ __CLASS__, 'awmr_woo_react_account_shortcode' ] );
 		add_action( 'wp_ajax_nopriv_awmr_login_user_action', [ __CLASS__, 'awmr_login_user_ajax' ] );
 		add_action( 'wp_ajax_nopriv_awmr_register_user_action', [ __CLASS__, 'awmr_register_user_ajax' ] );
 		add_action( 'wp_ajax_nopriv_awmr_lost_password_action', [ __CLASS__, 'awmr_lost_password_ajax' ] );
@@ -190,6 +190,20 @@ final class Frontend {
 		);
 	}
 
+	static function awmr_get_endpoints(): array {
+		$endpoints = array(
+			'orders'          => get_option( 'woocommerce_myaccount_orders_endpoint', 'orders' ),
+			'downloads'       => get_option( 'woocommerce_myaccount_downloads_endpoint', 'downloads' ),
+			'edit-address'    => get_option( 'woocommerce_myaccount_edit_address_endpoint', 'edit-address' ),
+			'payment-methods' => get_option( 'woocommerce_myaccount_payment_methods_endpoint', 'payment-methods' ),
+			'edit-account'    => get_option( 'woocommerce_myaccount_edit_account_endpoint', 'edit-account' ),
+			'customer-logout' => get_option( 'woocommerce_logout_endpoint', 'customer-logout' ),
+			'lost-password'   => get_option( 'woocommerce_myaccount_lost_password_endpoint', 'lost-password' ),
+		);
+
+		return apply_filters( 'awmr_account_endpoints', $endpoints );
+	}
+
 	/**
 	 * Include scripts/styles on frontend page for category page and shop page, adding localize script
 	 */
@@ -198,6 +212,10 @@ final class Frontend {
 
 		if ( ! is_account_page() ) {
 			return;
+		}
+
+		if ( is_account_page() ) {
+			remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
 		}
 
 		wp_enqueue_style( 'awmr_woo_react_account', URL . '/assets/css/awake_woo_react_account.css' );
@@ -210,6 +228,7 @@ final class Frontend {
 				'register_form'     => 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ),
 				'user_logged_in'    => ! empty( is_user_logged_in() ) ? is_user_logged_in() : 0,
 				'account_path_name' => get_woo_account_main_path(),
+				'endpoints'         => self::awmr_get_endpoints(),
 			),
 			'site_url'             => get_site_url(),
 			'ajax_url'             => admin_url( 'admin-ajax.php' ),
@@ -225,7 +244,12 @@ final class Frontend {
 	 * @return string
 	 */
 
-	static function awmr_woo_react_account_shortcode(): string {
-		return '<div id="awake-woo-react-account"></div>';
+	static function awmr_woo_react_account_shortcode( $content ): string {
+
+		if ( is_account_page() ) {
+			return '<div id="awake-woo-react-account"></div>';
+		}
+
+		return $content;
 	}
 }

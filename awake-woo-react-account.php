@@ -47,22 +47,22 @@ $myUpdateChecker = \Puc_v4_Factory::buildUpdateChecker(
 define( __NAMESPACE__ . '\VERSION', $myUpdateChecker->getInstalledVersion() );
 
 add_action( 'init', __NAMESPACE__ . '\awmr_init_checker' );
-register_activation_hook( __FILE__, __NAMESPACE__ . '\awmr_register_hook_on_activation' );
-/**
- * Register activation hook
- */
-
-function awmr_register_hook_on_activation() {
-	if ( defined( 'WC_VERSION' ) ) {
-		$woo_acc_url = get_permalink( wc_get_page_id( 'myaccount' ) );
-		$segments = explode('/', $woo_acc_url);
-		$woo_acc_path = end($segments);
-		$reg_rule     = '^' . $woo_acc_path . '/(.+)?';
-
-		add_rewrite_rule( $reg_rule, "index.php?pagename=' . $woo_acc_path . ", 'top' );
-		flush_rewrite_rules();
-	}
-}
+//register_activation_hook( __FILE__, __NAMESPACE__ . '\awmr_register_hook_on_activation' );
+//
+///**
+// * Register activation hook
+// */
+//
+//function awmr_register_hook_on_activation() {
+//	if ( defined( 'WC_VERSION' ) ) {
+//		$woo_acc_url = get_permalink( wc_get_page_id( 'myaccount' ) );
+//		$segments = explode('/', $woo_acc_url);
+//		$woo_acc_path = end($segments);
+//		$reg_rule     = '^' . $woo_acc_path . '/(.+)?';
+//		add_rewrite_rule( $reg_rule, "index.php?pagename=' . $woo_acc_path . ", 'top' );
+//		flush_rewrite_rules();
+//	}
+//}
 
 function awmr_init_checker() {
 	if ( ! defined( 'WC_VERSION' ) ) {
@@ -72,7 +72,11 @@ function awmr_init_checker() {
 		/**
 		 * Load the plugin
 		 */
-
+//		$woo_acc_url = get_permalink( wc_get_page_id( 'myaccount' ) );
+//		$segments = explode('/', $woo_acc_url);
+//		$woo_acc_path = end($segments);
+//		$reg_rule     = '^' . $woo_acc_path . '/(.+)?';
+//		add_rewrite_rule( $reg_rule, "index.php?pagename=' . $woo_acc_path . ", 'top' );
 		_self::load();
 
 	}

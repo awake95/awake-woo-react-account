@@ -818,6 +818,10 @@ body {
 	color: rgba(220, 38, 38, var(--tw-text-opacity));
 }
 
+.entry-title {
+  display: none;
+}
+
 .btn--primary {
 	border-radius: 0.25rem;
 	border-width: 0px;

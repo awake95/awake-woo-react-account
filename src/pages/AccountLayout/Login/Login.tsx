@@ -44,7 +44,7 @@ const Login: FC = () => {
         <div className='flex justify-between items-center mb-2'>
           <Checkbox actionType={ FormActionsEnum.SET_LOGIN_VALUES } setIsValueChanged={ setIsValueChanged }
                     name="remember_me" label="Remember me"/>
-          <Link className='block text-gray-600 text-sm hover:text-gray-900' to='/my-account/lost-password'>Lost password?</Link>
+          <Link className='block text-gray-600 text-sm hover:text-gray-900' to='/lost-password'>Lost password?</Link>
         </div>
 
         <Button classnames={ [ 'btn', 'btn--primary', 'mb-2' ] } type="submit">Login</Button>

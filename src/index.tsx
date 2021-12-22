@@ -39,7 +39,7 @@ const initialize = () => {
   if (awakeWooReactAccount) {
     render(
       <Provider store={store}>
-        <BrowserRouter>
+        <BrowserRouter basename='/my-account'>
           <App />
         </BrowserRouter>
       </Provider>,

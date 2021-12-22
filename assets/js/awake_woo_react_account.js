@@ -35137,11 +35137,6 @@ var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var router_1 = __webpack_require__(/*! ../router */ "./src/router/index.tsx");
 var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/index.js");
 __webpack_require__(/*! ./App.scss */ "./src/components/App.scss");
-var Login_1 = __webpack_require__(/*! ../pages/AccountLayout/Login/Login */ "./src/pages/AccountLayout/Login/Login.tsx");
-var PrivateRoute_1 = __webpack_require__(/*! ../router/PrivateRoute */ "./src/router/PrivateRoute.tsx");
-var Dashboard_1 = __webpack_require__(/*! ../pages/AccountLayout/Account/Dashboard/Dashboard */ "./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx");
-var AccountLayout_1 = __webpack_require__(/*! ../pages/AccountLayout/AccountLayout */ "./src/pages/AccountLayout/AccountLayout.tsx");
-var NotPrivateRoute_1 = __webpack_require__(/*! ../router/NotPrivateRoute */ "./src/router/NotPrivateRoute.tsx");
 exports.settings = window.awmr_localize_variables || {
     site_url: 'site_url',
     ajax_url: '/admin-ajax.php',
@@ -35152,19 +35147,12 @@ exports.settings = window.awmr_localize_variables || {
         generate_username: false,
         register_form: false,
         user_logged_in: false,
-        account_path_name: 'my-account',
+        account_path_name: '/',
     },
 };
 var App = function () {
     var allRoutes = (0, react_router_1.useRoutes)((0, router_1.default)());
-    return (React.createElement("div", { className: "app flex justify-center items-center", style: { minHeight: '100vh' } },
-        "1234",
-        React.createElement(react_router_1.Routes, null,
-            React.createElement(react_router_1.Route, { path: "/my-account", element: React.createElement(NotPrivateRoute_1.NotPrivateRoute, null,
-                    React.createElement(AccountLayout_1.default, null)) },
-                React.createElement(react_router_1.Route, { path: "login", element: React.createElement(Login_1.default, null) }),
-                React.createElement(react_router_1.Route, { path: "dashboard", element: React.createElement(PrivateRoute_1.default, null,
-                        React.createElement(Dashboard_1.default, null)) })))));
+    return (React.createElement("div", { className: "app flex justify-center items-center", style: { minHeight: '100vh' } }, allRoutes));
 };
 exports["default"] = App;
 
@@ -35338,6 +35326,7 @@ var TextField = function (_a) {
         type: 'password',
         shown: false
     }), passType = _j[0], setPassType = _j[1];
+    var timeout;
     var _k = (0, react_1.useState)(''), strongPassText = _k[0], setStrongPassText = _k[1];
     var dispatch = (0, react_redux_1.useDispatch)();
     var debouncedSearchTerm = (0, useDebounce_1.default)(value, 200);
@@ -35346,7 +35335,7 @@ var TextField = function (_a) {
             return;
         var strength = (0, CheckPassword_1.check_password_strength)(password);
         setStrongPassText(strength);
-        setTimeout(function () {
+        timeout = setTimeout(function () {
             setStrongPassText('');
         }, 3000);
     };
@@ -35361,13 +35350,16 @@ var TextField = function (_a) {
     };
     (0, react_1.useEffect)(function () {
         var _a;
-        setIsValueChanged(true);
         if (!actionType)
             return;
+        setIsValueChanged(true);
         if (type === 'password' && debouncedSearchTerm) {
             strengthChecker(value);
         }
         dispatch({ type: actionType, payload: (_a = {}, _a[name] = value, _a) });
+        return function () {
+            clearTimeout(timeout);
+        };
     }, [debouncedSearchTerm]);
     return (React.createElement("div", { className: "relative mb-3" },
         React.createElement("div", { className: "relative" },
@@ -35718,29 +35710,6 @@ exports.useTypedSelector = react_redux_1.useSelector;
 
 /***/ }),
 
-/***/ "./src/pages/AccountLayout/AccountLayout.tsx":
-/*!***************************************************!*\
-  !*** ./src/pages/AccountLayout/AccountLayout.tsx ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
-var useTypedSelector_1 = __webpack_require__(/*! ../../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
-var AccountLayout = function () {
-    var navigate = (0, react_router_dom_1.useNavigate)(), location = (0, react_router_dom_1.useLocation)();
-    var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
-    return (React.createElement("div", null,
-        React.createElement(react_router_dom_1.Outlet, null)));
-};
-exports["default"] = AccountLayout;
-
-
-/***/ }),
-
 /***/ "./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx":
 /*!*****************************************************************!*\
   !*** ./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx ***!
@@ -35751,10 +35720,31 @@ exports["default"] = AccountLayout;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
 var Dashboard = function () {
-    return (React.createElement("div", null, "Dashboard"));
+    return (React.createElement("div", null,
+        React.createElement(react_router_dom_1.Link, { to: '/account' }, "Account"),
+        React.createElement(react_router_dom_1.Outlet, null)));
 };
 exports["default"] = Dashboard;
+
+
+/***/ }),
+
+/***/ "./src/pages/AccountLayout/Account/Orders/Orders.tsx":
+/*!***********************************************************!*\
+  !*** ./src/pages/AccountLayout/Account/Orders/Orders.tsx ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var Orders = function () {
+    return (React.createElement("div", null, "Orders"));
+};
+exports["default"] = Orders;
 
 
 /***/ }),
@@ -35797,7 +35787,7 @@ var Login = function () {
             React.createElement(TextField_1.default, { actionType: types_1.FormActionsEnum.SET_LOGIN_VALUES, errors: loginSubmitErrors, setIsValueChanged: setIsValueChanged, classnames: ['w-full', 'border-2', 'border-gray-300', 'rounded', 'p-2'], name: "password", placeholder: "Enter your password", type: "password", showPassword: true }),
             React.createElement("div", { className: 'flex justify-between items-center mb-2' },
                 React.createElement(Checkbox_1.default, { actionType: types_1.FormActionsEnum.SET_LOGIN_VALUES, setIsValueChanged: setIsValueChanged, name: "remember_me", label: "Remember me" }),
-                React.createElement(react_router_dom_1.Link, { className: 'block text-gray-600 text-sm hover:text-gray-900', to: '/my-account/lost-password' }, "Lost password?")),
+                React.createElement(react_router_dom_1.Link, { className: 'block text-gray-600 text-sm hover:text-gray-900', to: '/lost-password' }, "Lost password?")),
             React.createElement(Button_1.default, { classnames: ['btn', 'btn--primary', 'mb-2'], type: "submit" }, "Login")),
         isRegFormVisible &&
             React.createElement(Form_1.default, { id: "register-form", classnames: ['bg-white', 'w-full', 'md:w-1/2', 'md:ml-4', 'mb-4', 'md:mb-0', 'rounded', 'shadow-md', 'p-4', 'relative'], isValueChanged: isValueChanged, setIsValueChanged: setIsValueChanged, setSubmitErrors: setRegisterSubmitErrors, submitErrors: registerSubmitErrors, selectedValues: selectedRegisterValues, validation: RegisterValidation_1.default, responseData: registerResponse },
@@ -35858,65 +35848,6 @@ exports["default"] = LostPassword;
 
 /***/ }),
 
-/***/ "./src/router/NotPrivateRoute.tsx":
-/*!****************************************!*\
-  !*** ./src/router/NotPrivateRoute.tsx ***!
-  \****************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.NotPrivateRoute = void 0;
-var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
-var useTypedSelector_1 = __webpack_require__(/*! ../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
-var Dashboard_1 = __webpack_require__(/*! ../pages/AccountLayout/Account/Dashboard/Dashboard */ "./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx");
-var Login_1 = __webpack_require__(/*! ../pages/AccountLayout/Login/Login */ "./src/pages/AccountLayout/Login/Login.tsx");
-var NotPrivateRoute = function (_a) {
-    var children = _a.children;
-    var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
-    var navigate = (0, react_router_dom_1.useNavigate)();
-    if (isAuth) {
-        navigate('/my-account/dashboard', { replace: true });
-        return React.createElement(Dashboard_1.default, null);
-    }
-    else {
-        navigate('/my-account/login', { replace: true });
-        return React.createElement(Login_1.default, null);
-    }
-};
-exports.NotPrivateRoute = NotPrivateRoute;
-
-
-/***/ }),
-
-/***/ "./src/router/PrivateRoute.tsx":
-/*!*************************************!*\
-  !*** ./src/router/PrivateRoute.tsx ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
-var useTypedSelector_1 = __webpack_require__(/*! ../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
-var PrivateRoute = function (_a) {
-    var children = _a.children;
-    var location = (0, react_router_dom_1.useLocation)();
-    var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
-    if (!isAuth) {
-        return React.createElement(react_router_dom_1.Navigate, { to: "/my-account/login", state: { from: location } });
-    }
-    return children;
-};
-exports["default"] = PrivateRoute;
-
-
-/***/ }),
-
 /***/ "./src/router/index.tsx":
 /*!******************************!*\
   !*** ./src/router/index.tsx ***!
@@ -35928,48 +35859,111 @@ exports["default"] = PrivateRoute;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RouteNames = void 0;
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var Login_1 = __webpack_require__(/*! ../pages/AccountLayout/Login/Login */ "./src/pages/AccountLayout/Login/Login.tsx");
 var Dashboard_1 = __webpack_require__(/*! ../pages/AccountLayout/Account/Dashboard/Dashboard */ "./src/pages/AccountLayout/Account/Dashboard/Dashboard.tsx");
-var AccountLayout_1 = __webpack_require__(/*! ../pages/AccountLayout/AccountLayout */ "./src/pages/AccountLayout/AccountLayout.tsx");
 var LostPassword_1 = __webpack_require__(/*! ../pages/AccountLayout/LostPassword/LostPassword */ "./src/pages/AccountLayout/LostPassword/LostPassword.tsx");
-var PrivateRoute_1 = __webpack_require__(/*! ./PrivateRoute */ "./src/router/PrivateRoute.tsx");
-var settings = window.awmr_localize_variables || {
-    woo_account_settings: {
-        generate_password: false,
-        generate_username: false,
-        register_form: false,
-        user_logged_in: false,
-        account_path_name: 'my-account',
-    },
-};
+var PrivateRoute_1 = __webpack_require__(/*! ./routes/PrivateRoute */ "./src/router/routes/PrivateRoute.tsx");
+var NotPrivateRoute_1 = __webpack_require__(/*! ./routes/NotPrivateRoute */ "./src/router/routes/NotPrivateRoute.tsx");
+var Orders_1 = __webpack_require__(/*! ../pages/AccountLayout/Account/Orders/Orders */ "./src/pages/AccountLayout/Account/Orders/Orders.tsx");
+var DashboardPrivateRoute_1 = __webpack_require__(/*! ./routes/DashboardPrivateRoute */ "./src/router/routes/DashboardPrivateRoute.tsx");
 exports.RouteNames = {
-    login: 'login',
     account: '/',
-    dashboard: 'dashboard',
-    lostPassword: 'lost-password'
+    lostPassword: '/lost-password',
+    orders: '/orders',
 };
 var routes = function () { return [
     {
+        path: exports.RouteNames.lostPassword,
+        element: React.createElement(NotPrivateRoute_1.NotPrivateRoute, null,
+            React.createElement(LostPassword_1.default, null)),
+    },
+    {
+        path: exports.RouteNames.orders,
+        element: React.createElement(PrivateRoute_1.default, null,
+            React.createElement(Orders_1.default, null)),
+    },
+    {
         path: exports.RouteNames.account,
-        element: React.createElement(AccountLayout_1.default, null),
-        children: [
-            {
-                path: exports.RouteNames.dashboard,
-                element: React.createElement(PrivateRoute_1.default, null,
-                    React.createElement(Dashboard_1.default, null))
-            },
-            {
-                path: exports.RouteNames.login,
-                element: React.createElement(Login_1.default, null),
-            },
-            {
-                path: exports.RouteNames.lostPassword,
-                element: React.createElement(LostPassword_1.default, null),
-            }
-        ]
+        element: React.createElement(DashboardPrivateRoute_1.default, null,
+            React.createElement(Dashboard_1.default, null))
     },
 ]; };
 exports["default"] = routes;
+
+
+/***/ }),
+
+/***/ "./src/router/routes/DashboardPrivateRoute.tsx":
+/*!*****************************************************!*\
+  !*** ./src/router/routes/DashboardPrivateRoute.tsx ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var useTypedSelector_1 = __webpack_require__(/*! ../../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
+var Login_1 = __webpack_require__(/*! ../../pages/AccountLayout/Login/Login */ "./src/pages/AccountLayout/Login/Login.tsx");
+var DashboardPrivateRoute = function (_a) {
+    var children = _a.children;
+    var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
+    if (!isAuth) {
+        return React.createElement(Login_1.default, null);
+    }
+    return children;
+};
+exports["default"] = DashboardPrivateRoute;
+
+
+/***/ }),
+
+/***/ "./src/router/routes/NotPrivateRoute.tsx":
+/*!***********************************************!*\
+  !*** ./src/router/routes/NotPrivateRoute.tsx ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NotPrivateRoute = void 0;
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/index.js");
+var useTypedSelector_1 = __webpack_require__(/*! ../../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
+var NotPrivateRoute = function (_a) {
+    var children = _a.children;
+    var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
+    if (isAuth) {
+        return React.createElement(react_router_1.Navigate, { to: '/' });
+    }
+    return children;
+};
+exports.NotPrivateRoute = NotPrivateRoute;
+
+
+/***/ }),
+
+/***/ "./src/router/routes/PrivateRoute.tsx":
+/*!********************************************!*\
+  !*** ./src/router/routes/PrivateRoute.tsx ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/index.js");
+var useTypedSelector_1 = __webpack_require__(/*! ../../hooks/useTypedSelector */ "./src/hooks/useTypedSelector.ts");
+var PrivateRoute = function (_a) {
+    var children = _a.children;
+    var isAuth = (0, useTypedSelector_1.useTypedSelector)(function (state) { return state.authReducer; }).isAuth;
+    if (!isAuth) {
+        return React.createElement(react_router_dom_1.Navigate, { to: '/' });
+    }
+    return children;
+};
+exports["default"] = PrivateRoute;
 
 
 /***/ }),
@@ -36583,7 +36577,7 @@ var initialize = function () {
     var awakeWooReactAccount = document.querySelector('#awake-woo-react-account');
     if (awakeWooReactAccount) {
         (0, react_dom_1.render)(React.createElement(react_redux_1.Provider, { store: store_1.store },
-            React.createElement(react_router_dom_1.BrowserRouter, null,
+            React.createElement(react_router_dom_1.BrowserRouter, { basename: '/my-account' },
                 React.createElement(App_1.default, null))), awakeWooReactAccount);
     }
 };
