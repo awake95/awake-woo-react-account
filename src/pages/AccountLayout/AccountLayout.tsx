@@ -1,11 +1,27 @@
 import * as React from 'react';
-import {Link, Outlet} from 'react-router-dom';
+import { FC } from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+import Login from './Login/Login';
+import Dashboard from './Account/Dashboard/Dashboard';
+import Sidebar from '../../components/Sidebar/Sidebar';
 
-const AccountLayout = () => {
+const AccountLayout: FC = () => {
+  const { isAuth } = useTypedSelector( state => state.authReducer );
+  const location = useLocation();
+
+  if ( !isAuth ) {
+    return <Login/>;
+  }
+
   return (
-    <div>
-        <Link to='/dashboard'>Dashboard</Link>
-        <Link to='/login'>Login</Link>
+    <div className='flex w-full'>
+      <Sidebar/>
+      {
+        location.pathname === '/' &&
+        <Dashboard/>
+      }
+      <Outlet/>
     </div>
   );
 };

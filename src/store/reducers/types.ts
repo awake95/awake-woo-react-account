@@ -22,8 +22,11 @@ export type PostDataType = {
   lost_password?: boolean,
 }
 
-export enum AuthActionsEnum {
+export enum ActionsEnum {
   SET_AUTH = 'SET_AUTH',
+  SET_NOTICE_SHOWN = 'SET_NOTICE_SHOWN',
+  SET_NOTICE_MESSAGE = 'SET_NOTICE_MESSAGE',
+  SET_NOTICE_TYPE = 'SET_NOTICE_TYPE',
 }
 
 export enum FormActionsEnum {
@@ -42,7 +45,7 @@ export enum FormActionsEnum {
 }
 
 export interface SetAuthAction {
-  type: AuthActionsEnum.SET_AUTH;
+  type: ActionsEnum.SET_AUTH;
   payload: boolean;
 }
 
@@ -61,6 +64,21 @@ export interface SetLostPassAction {
   payload: valuesType;
 }
 
+export interface SetNoticeShownAction {
+  type: ActionsEnum.SET_NOTICE_SHOWN ;
+  payload: boolean;
+}
+
+export interface SetNoticeTypeAction {
+  type: ActionsEnum.SET_NOTICE_TYPE ;
+  payload: string;
+}
+
+export interface SetNoticeMessageAction {
+  type: ActionsEnum.SET_NOTICE_MESSAGE ;
+  payload: string;
+}
+
 export interface LoginSetPostDataAction {
     type: FormActionsEnum.LOGIN_REQUEST_STARTED | FormActionsEnum.LOGIN_REQUEST_SUCCEEDED | FormActionsEnum.LOGIN_REQUEST_FAILED;
     payload: valuesType;
@@ -76,7 +94,14 @@ export interface LostPassSetPostDataAction {
   payload: valuesType;
 }
 
+export interface INoticeState {
+  isShown: boolean;
+  message: string;
+  type: string;
+}
+
 export type LoginAction = SetLoginAction
 export type LostAction = SetLostPassAction
 export type RegisterAction = SetRegisterAction
 export type AuthAction = SetAuthAction
+export type NoticeAction = SetNoticeShownAction | SetNoticeTypeAction | SetNoticeMessageAction

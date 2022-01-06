@@ -1,9 +1,10 @@
-import * as React from 'react'
-import {render} from 'react-dom'
-import App from "./components/App";
-import {Provider} from "react-redux";
+import * as React from 'react';
+import { render } from 'react-dom';
+import App from './components/App';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import {store} from "./store";
+import { store } from './store';
+import { TransitionGroup } from 'react-transition-group';
 
 export interface IParams {
   site_url: string,
@@ -16,12 +17,14 @@ export interface IParams {
     register_form: boolean,
     user_logged_in: boolean,
     account_path_name: string,
+    endpoints: { [ key: string ]: string }
+    logout_url: string
   },
 }
 
 type WPObject = {
   passwordStrength: {
-    meter: (pass:string, blacklist: string[]) => number,
+    meter: ( pass: string, blacklist: string[] ) => number,
     userInputDisallowedList: () => string[]
   }
 }
@@ -29,26 +32,29 @@ type WPObject = {
 declare global {
   export interface Window {
     awmr_localize_variables: IParams;
-    wp: WPObject
+    wp: WPObject;
   }
 }
 
 const initialize = () => {
-  const awakeWooReactAccount = document.querySelector('#awake-woo-react-account');
+  const awakeWooReactAccount = document.querySelector( '#awake-woo-react-account' );
+  const basename = '/' + window.awmr_localize_variables.woo_account_settings.account_path_name;
 
-  if (awakeWooReactAccount) {
+  if ( awakeWooReactAccount ) {
     render(
-      <Provider store={store}>
-        <BrowserRouter basename='/my-account'>
-          <App />
+      <Provider store={ store }>
+        <BrowserRouter basename={ basename }>
+          <TransitionGroup component={null}>
+            <App/>
+          </TransitionGroup>
         </BrowserRouter>
       </Provider>,
       awakeWooReactAccount
-    )
+    );
   }
-}
+};
 
-window.addEventListener('DOMContentLoaded', initialize);
+window.addEventListener( 'DOMContentLoaded', initialize );
 
 
 

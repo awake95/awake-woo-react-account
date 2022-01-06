@@ -1,4 +1,4 @@
-import {AuthAction, AuthActionsEnum, AuthState} from "../types";
+import {AuthAction, ActionsEnum, AuthState} from "../types";
 import { settings } from '../../../components/App'
 
 const initialState:AuthState = {
@@ -7,7 +7,7 @@ const initialState:AuthState = {
 
 export default function authReducer(state= initialState, action:AuthAction): AuthState {
     switch (action.type) {
-        case AuthActionsEnum.SET_AUTH:
+        case ActionsEnum.SET_AUTH:
             console.log('auth is changed');
             return {...state, isAuth: action.payload}
         default:

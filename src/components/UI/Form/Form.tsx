@@ -4,8 +4,9 @@ import useForm from '../../../hooks/useForm';
 import { setFormData } from '../../../helpers/AsyncActions/setFormData';
 import { settings } from '../../App';
 import { useDispatch } from 'react-redux';
-import { AuthActionsEnum, FormActionsEnum, FormPostDataState, PostDataType } from '../../../store/reducers/types';
+import { ActionsEnum, FormActionsEnum, FormPostDataState, PostDataType } from '../../../store/reducers/types';
 import Spinner from '../Spinner/Spinner';
+import { dispatchNotice } from '../../../helpers/DispatchNotice/DispatchNotice';
 
 type formPropTypes = {
   classnames?: string[];
@@ -64,7 +65,8 @@ const Form: FC<formPropTypes> = ( {
 
     if ( id === 'login-form' ) {
       if ( response.loggedin ) {
-        dispatch( { type: AuthActionsEnum.SET_AUTH, payload: response.loggedin } );
+        dispatch( { type: ActionsEnum.SET_AUTH, payload: response.loggedin } );
+        dispatchNotice('success', 'You are successfully logged in', true, dispatch, 2000);
       } else {
         ( Object.keys( response.message ).length > 0 && Object.keys( response.message ) as Array<string> ).map( key => {
           let errors: values = {};
@@ -72,8 +74,10 @@ const Form: FC<formPropTypes> = ( {
 
           if ( key.includes( 'username' ) || key.includes( 'email' ) ) {
             errors[ 'username' ] = message[ key ];
+            dispatchNotice('errors', message[ key ], true, dispatch);
           } else {
             errors[ 'password' ] = message[ key ];
+            dispatchNotice('errors', message[ key ], true, dispatch);
           }
 
           setSubmitErrors( errors );
@@ -84,7 +88,9 @@ const Form: FC<formPropTypes> = ( {
 
     if ( id === 'register-form' ) {
       if ( response.created ) {
-        dispatch( { type: AuthActionsEnum.SET_AUTH, payload: response.created } );
+        dispatch( { type: ActionsEnum.SET_AUTH, payload: response.created } );
+        dispatchNotice('success', 'You are successfully registered', true, dispatch, 2000);
+
       } else {
         let errors: values = {};
         const message = response.message;

@@ -16,6 +16,7 @@
     "@types/react": "^17.0.34",
     "@types/react-dom": "^17.0.11",
     "@types/react-redux": "^7.1.20",
+    "@types/react-transition-group": "^4.4.4",
     "@types/redux-thunk": "^2.1.0",
     "@types/webpack": "^5.28.0",
     "autoprefixer": "^10.4.0",
@@ -35,7 +36,7 @@
     "redux-thunk": "^2.4.1",
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",
-    "tailwindcss": "^2.2.19",
+    "tailwindcss": "^3.0.7",
     "terser-webpack-plugin": "^5.2.5",
     "ts-loader": "^9.2.6",
     "typescript": "^4.4.4",
@@ -46,7 +47,8 @@
   "moduleResolution": "node",
   "dependencies": {
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-transition-group": "^4.4.2"
   },
   "homepage": "/wp-content/plugins/awake-woo-react-account/assets",
   "browserslist": [

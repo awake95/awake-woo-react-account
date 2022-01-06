@@ -5,8 +5,7 @@ import {Link, Outlet} from "react-router-dom";
 const Dashboard:FC = () => {
     return (
         <div>
-            <Link to={'/account'}>Account</Link>
-            <Outlet/>
+            Dashboard
         </div>
     );
 };

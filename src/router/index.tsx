@@ -5,6 +5,8 @@ import PrivateRoute from "./routes/PrivateRoute";
 import {NotPrivateRoute} from "./routes/NotPrivateRoute";
 import Orders from "../pages/AccountLayout/Account/Orders/Orders";
 import DashboardPrivateRoute from "./routes/DashboardPrivateRoute";
+import AccountLayout from '../pages/AccountLayout/AccountLayout';
+import PageNotFound from '../pages/AccountLayout/PageNotFound/PageNotFound';
 
 export interface IRoute {
   path: string;
@@ -15,23 +17,30 @@ export interface IRoute {
 
 export const RouteNames = {
   account: '/',
-  lostPassword: '/lost-password',
-  orders: '/orders',
+  lostPassword: 'lost-password',
+  orders: 'orders',
 }
 
 const routes = (): IRoute[] => [
   {
-    path: RouteNames.lostPassword,
-    element: <NotPrivateRoute><LostPassword/></NotPrivateRoute>,
-  },
-  {
-    path: RouteNames.orders,
-    element: <PrivateRoute><Orders/></PrivateRoute>,
-  },
-  {
     path: RouteNames.account,
-    element: <DashboardPrivateRoute><Dashboard/></DashboardPrivateRoute>
+    element: <AccountLayout/>,
+    children: [
+      {
+        path: RouteNames.lostPassword,
+        element: <LostPassword/>,
+      },
+      {
+        path: RouteNames.orders,
+        element: <Orders/>,
+      },
+      {
+        path: '*',
+        element: <PageNotFound/>
+      }
+    ]
   },
+
 
 ];
 
